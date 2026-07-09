@@ -16,6 +16,7 @@ A suite of three Claude Code skills that teaches you your own codebases like a p
 
 - The build plan (kept locally): locked decisions, axioms, phased tasks
 - The task prompts (kept locally): one execution prompt per roadmap task
+- [docs/DECISIONS.md](docs/DECISIONS.md) — the decision record: every locked decision with its rationale
 
 ## License
 
