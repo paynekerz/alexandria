@@ -1,0 +1,12 @@
+{
+  // Shared config for local runs and the CI action.
+  "default": true,
+  "MD013": false, // line length — prose and tables run long by design
+  "MD033": false, // inline HTML — needed for <details> blocks in docs
+  "MD041": false, // first-line heading — vault notes start with YAML frontmatter
+  "MD024": { "siblings_only": true }, // duplicate headings ok across sections (e.g. per-session "## Comprehension")
+  "MD034": false, // bare URLs — ROADMAP cites sources as plain URLs
+  "MD036": false, // emphasis-as-heading — internal planning docs use bold task labels intentionally
+  "MD037": false, // false-positives on _glossary.md / _index.md filenames
+  "MD060": false // table pipe style — compact |---| separators used throughout
+}
