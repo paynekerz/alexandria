@@ -121,6 +121,15 @@ class Vault:
     def exists(self, relative):
         return self.resolve(relative).exists()
 
+    def remove_note(self, relative):
+        """Delete a single derived file (lint --repair only). Never a directory."""
+        target = self.resolve(relative)
+        if target.is_dir():
+            raise VaultError(f"refusing to remove a directory: {target}")
+        if target.exists():
+            target.unlink()
+        return target
+
 
 # --- Note schema (docs/VAULT-SCHEMA.md) -------------------------------------
 #
