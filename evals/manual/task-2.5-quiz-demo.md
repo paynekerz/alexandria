@@ -8,19 +8,19 @@ Both simulations continue the task 2.1 session (project `IQProPayment`, intro de
 >
 > **Alexandria:** Before I file it — quick check, three questions (say "skip" to skip):
 >
-> 1. The controller replies "received: true" even when saving the event fails. Why is that deliberate?
+> **Q1.** The controller replies "received: true" even when saving the event fails. Why is that deliberate?
 >
 > **User:** because otherwise the gateway keeps resending it over and over
 >
 > **Alexandria:** Correct — an error response triggers the gateway's redelivery cycle; acknowledging keeps it calm.
 >
-> 2. The webhook controller never touches an order. Where does the order actually get updated, and why there?
+> **Q2.** The webhook controller never touches an order. Where does the order actually get updated, and why there?
 >
 > **User:** the controller updates it right after inserting the row
 >
 > **Alexandria:** Incorrect — the scheduled cron job (`ProcessWebhookEvents`) reads unprocessed rows later and applies them; receiving stays fast so a slow order save can't stall the gateway.
 >
-> 3. This endpoint accepts POSTs without the token Magento normally requires. Why is skipping that check acceptable here?
+> **Q3.** This endpoint accepts POSTs without the token Magento normally requires. Why is skipping that check acceptable here?
 >
 > **User:** the caller is the gateway server, not a browser — there's no user session or form token to check
 >
