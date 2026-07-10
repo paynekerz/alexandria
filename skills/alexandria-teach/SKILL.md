@@ -39,3 +39,5 @@ On exit 0, tell the user in one short paragraph what was created (config path, v
 ## Step 1 — Teach
 
 Not yet implemented (Phase 2.1). Tell the user the teaching engine isn't built yet and point them to the internal build plan Phase 2.
+
+**Design note (binding for Phase 2):** the heavy explanation work is delegated to the `alexandria-teacher` subagent (installed at `~/.claude/agents/alexandria-teacher.md` by setup, model-pinned from `preferredModel` — see `docs/MODEL-SELECTION.md`). This skill orchestrates: it scopes the request, gathers already-taught concepts, invokes the subagent with files + depth + known concepts, then handles wiki-linking, the save offer, and the quiz around the subagent's lesson. If the subagent is not installed, recommend re-running setup; if delegation is impossible, teach inline and — when the session model differs from `preferredModel` — recommend `/model` (that is the most a skill can do).

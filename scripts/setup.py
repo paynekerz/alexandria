@@ -9,6 +9,7 @@ Exit codes: 0 ok, 2 invalid arguments/paths, 3 already configured (no --force).
 import argparse
 import datetime
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,6 +23,31 @@ from config import (
 )
 
 GENERATOR_VERSION = "0.1.0"
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def agents_dir():
+    # ALEXANDRIA_AGENTS_DIR is the test hook; real installs use ~/.claude/agents
+    override = os.environ.get("ALEXANDRIA_AGENTS_DIR")
+    return Path(override) if override else Path.home() / ".claude" / "agents"
+
+
+def generate_teacher_agent(model):
+    """Fill agents/alexandria-teacher.md's model placeholder and install it.
+
+    'inherit' means: omit the model line entirely so the subagent runs on
+    whatever model the session runs on (see docs/MODEL-SELECTION.md).
+    """
+    template = (REPO_ROOT / "agents" / "alexandria-teacher.md").read_text(encoding="utf-8")
+    if model == "inherit":
+        filled = template.replace("model: {{ALEXANDRIA_MODEL}}\n", "")
+    else:
+        filled = template.replace("{{ALEXANDRIA_MODEL}}", model)
+    target = agents_dir() / "alexandria-teacher.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(filled, encoding="utf-8")
+    return target
 
 
 def write_config(vault_path_raw, model, depth, quiz):
@@ -103,9 +129,11 @@ def main():
         print(f"vaultPath: could not scaffold vault at {vault_root} ({e})", file=sys.stderr)
         return 2
     load_config()  # self-check: what we wrote must pass the shared validator
+    agent_file = generate_teacher_agent(args.model.strip())
 
     print(f"Config written: {cfg_file}")
     print(f"Vault root:     {vault_root}")
+    print(f"Teacher agent:  {agent_file} (model: {args.model.strip()})")
     for c in created:
         print(f"  created {c.relative_to(vault_root) if c != vault_root else '.'}")
     if not created:
