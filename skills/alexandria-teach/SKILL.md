@@ -90,6 +90,16 @@ Every teach response — first lesson, follow-up question, two-line clarificatio
 
 If a follow-up adds or removes concepts, the draft list in the newest response is the current truth. The list the user confirms at save time is what the librarian writes.
 
+## Step 6 — Comprehension check (conditional, session end)
+
+Runs at session end — when the user accepts the save offer or says they're done. Trigger logic:
+
+- Config `quizEnabled: true` → run the quiz, unless the user declined it this session.
+- Config `quizEnabled: false` → no quiz, unless the user asks ("quiz me").
+- The per-session override always wins, in both directions. Declining is frictionless and never argued with.
+
+Rules: 2–3 open questions, each targeting exactly one of **this session's confirmed concepts** — never untaught material, never trivia. Ask conversationally, grade honestly (a wrong answer gets a one-line correction, not a lecture), and format results per [references/quiz.md](references/quiz.md): a `quizScore: "<correct>/<asked>"` frontmatter value and a `## Comprehension` table for the session note. No quiz → no `quizScore` field and no `## Comprehension` section in the saved note. Quiz results are part of the session record handed to `alexandria-librarian`.
+
 ## Reference files (load on demand only — token efficiency)
 
 | File | When to load |
@@ -97,3 +107,4 @@ If a follow-up adds or removes concepts, the draft list in the newest response i
 | [references/depth.md](references/depth.md) | Before writing any lesson — depth semantics |
 | [references/sources.md](references/sources.md) | Only when considering an external source |
 | [references/diagrams.md](references/diagrams.md) | Only when considering a diagram |
+| [references/quiz.md](references/quiz.md) | Only when a comprehension check will run |
