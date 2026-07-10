@@ -10,3 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Repository scaffold: skill folders, `agents/`, `scripts/`, `templates/`, `evals/`, `docs/`, MIT license, markdown-lint CI.
+- Phase 0: `docs/DECISIONS.md` (15 locked decisions with rationale), `docs/VAULT-SCHEMA.md` v1 + hand-built `docs/example-vault/`, `docs/CONFIG.md`.
+- Phase 1: first-run setup (`scripts/config.py` shared read path, `scripts/setup.py`, Step 0 blocks in all three SKILL.md files), `scripts/vault.py` with 19 unit tests, model-pinned `agents/alexandria-teacher.md` + `docs/MODEL-SELECTION.md`.
+- Phase 2: `alexandria-teach` core workflow (125-line SKILL.md), depth system, tiered source rules, Mermaid diagram rules, optional comprehension quiz, accuracy guardrails — manual test artifacts in `evals/manual/`.
