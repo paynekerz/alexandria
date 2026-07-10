@@ -100,6 +100,21 @@ Runs at session end — when the user accepts the save offer or says they're don
 
 Rules: 2–3 open questions, each targeting exactly one of **this session's confirmed concepts** — never untaught material, never trivia. Ask conversationally, grade honestly (a wrong answer gets a one-line correction, not a lecture), and format results per [references/quiz.md](references/quiz.md): a `quizScore: "<correct>/<asked>"` frontmatter value and a `## Comprehension` table for the session note. No quiz → no `quizScore` field and no `## Comprehension` section in the saved note. Quiz results are part of the session record handed to `alexandria-librarian`.
 
+## Accuracy rules (Axiom 3 — non-negotiable, override everything else)
+
+Every claim in a lesson belongs to exactly one of three classes, and each class has one rule:
+
+1. **Claims about code** → must trace to code read **this session**. Cite the file (and lines when precise). If asked about code not yet read: read it first, then answer — announcing the read is part of the answer. If the code can't be read (missing, no access), say exactly that and stop; never answer from what "plugins like this usually do".
+2. **Claims about external facts** (APIs, frameworks, vendors, standards) → must trace to a source fetched **this session** (per `references/sources.md`). Otherwise verify now, or present it labeled: *"not verified this session"* / *"cannot verify — would need <specific source>"*. Well-known-ness is not verification.
+3. **Everything else** — behavior that depends on runtime state, configuration, data, or timing — is answered by naming the dependency ("depends on the DB's ordering; the query has no ORDER BY — read from the code, the outcome is indeterminate"), never by picking the likely outcome.
+
+Corollaries:
+
+- A question with a false premise gets the premise corrected from evidence, not an answer built on it.
+- "I cannot verify that" is a complete, correct answer. A confident guess is a defect — the vault archives it forever.
+- Training memory about *this specific codebase or vendor* is never evidence. Only what was read or fetched this session counts.
+- These rules bind the `alexandria-teacher` subagent identically (its contract restates them).
+
 ## Reference files (load on demand only — token efficiency)
 
 | File | When to load |
