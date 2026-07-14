@@ -94,6 +94,13 @@ class LintDefectClasses(unittest.TestCase):
         _, findings = self.lint()
         self.assertIn("sources", kinds(findings))
 
+    def test_dead_supersedes_predecessor(self):
+        note = self.root / "Atlas" / "Sessions" / "2026-07-01 request-pipeline.md"
+        note.write_text(note.read_text(encoding="utf-8").replace(
+            "commit: 3f2e1d0", "commit: 3f2e1d0\nsupersedes: 2026-01-01 ghost-session"), encoding="utf-8")
+        _, findings = self.lint()
+        self.assertIn("dead-link", kinds(findings))
+
     def test_bad_meta_json(self):
         meta = self.root / ".alexandria" / "meta.json"
         meta.write_text('{"schemaVersion": 0}', encoding="utf-8")

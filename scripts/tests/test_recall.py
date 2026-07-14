@@ -1,8 +1,9 @@
-"""Unit tests for recall.py (ROADMAP 4.1, 4.2).
+"""Unit tests for recall.py (ROADMAP 4.1, 4.2, 4.3).
 
 Run from the scripts/ directory:  python -m unittest discover -s tests -v
 """
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -11,8 +12,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import recall  # noqa: E402
-from recall import RecallError, concept_check, cross_project, search  # noqa: E402
-from vault import Vault  # noqa: E402
+from recall import RecallError, concept_check, cross_project, drift, search  # noqa: E402
+from vault import NoteError, Vault, save_session  # noqa: E402
+from vault_lint import Linter  # noqa: E402
 
 EXAMPLE_VAULT = Path(__file__).resolve().parent.parent.parent / "docs" / "example-vault"
 
@@ -145,6 +147,113 @@ class CrossProjectRestraint(unittest.TestCase):
                 cross_project(self.vault, "Aurora", "Tokenization")
         _, opened = record_opens(attempt)
         self.assertEqual(self.opened_under(opened, "Atlas", "Alexandria"), [])
+
+
+class DriftDetection(unittest.TestCase):
+    """ROADMAP 4.3: modified covered file -> flagged; unmodified -> not
+    flagged; refresh -> new note linked to its predecessor, never overwrite."""
+
+    PROJECT = "Scriptorium"
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        base = Path(self._tmp.name)
+        self.root = base / "vault"
+        shutil.copytree(EXAMPLE_VAULT, self.root)
+        self.vault = Vault(self.root)
+        self.repo = base / "repo"
+        self.repo.mkdir()
+        self.git("init", "-q")
+        self.git("config", "user.email", "test@example.com")
+        self.git("config", "user.name", "Test")
+        (self.repo / "src").mkdir()
+        (self.repo / "src" / "app.py").write_text("def parse():\n    return 1\n", encoding="utf-8")
+        self.git("add", ".")
+        self.git("commit", "-q", "-m", "initial")
+        self.commit = self.git("rev-parse", "--short", "HEAD").strip()
+
+    def git(self, *args):
+        return subprocess.run(["git", *args], cwd=str(self.repo), check=True,
+                              capture_output=True, text=True).stdout
+
+    def payload(self, slug, commit, supersedes=None):
+        lesson = f"[[{self.PROJECT}/_glossary#Parsing|Parsing]] turns raw text into structure."
+        if supersedes:
+            lesson += f" Refreshes [[{supersedes}]] after changes to the parser."
+        p = {
+            "project": self.PROJECT, "title": "How parsing works", "slug": slug,
+            "date": "2026-07-13", "depth": "intro",
+            "concepts": [{"name": "Parsing", "definition": "Turning raw text into structured data."}],
+            "files": ["src/app.py"], "commit": commit, "sources": [], "lesson": lesson,
+        }
+        if supersedes:
+            p["supersedes"] = supersedes
+        return p
+
+    def entry(self, report, stem):
+        return next(e for e in report["sessions"] if e["note"] == stem)
+
+    def test_full_drift_and_refresh_loop(self):
+        # save a session -> unmodified repo -> not flagged
+        save_session(self.vault, self.payload("how-parsing-works", self.commit))
+        stem = "2026-07-13 how-parsing-works"
+        report = drift(self.vault, self.PROJECT, self.repo)
+        self.assertEqual(self.entry(report, stem)["status"], "fresh")
+        self.assertEqual(report["stale"], [])
+
+        # modify the covered file -> flagged, naming the file
+        (self.repo / "src" / "app.py").write_text("def parse():\n    return 2\n", encoding="utf-8")
+        report = drift(self.vault, self.PROJECT, self.repo)
+        self.assertEqual(self.entry(report, stem)["status"], "stale")
+        self.assertEqual(self.entry(report, stem)["changedFiles"], ["src/app.py"])
+        self.assertEqual(report["stale"], [stem])
+
+        # accept the refresh -> new linked note; predecessor preserved
+        self.git("commit", "-qam", "change parser")
+        new_commit = self.git("rev-parse", "--short", "HEAD").strip()
+        save_session(self.vault, self.payload("how-parsing-works-refreshed", new_commit, supersedes=stem))
+        new_stem = "2026-07-13 how-parsing-works-refreshed"
+        old_note = (self.root / self.PROJECT / "Sessions" / f"{stem}.md").read_text(encoding="utf-8")
+        new_note = (self.root / self.PROJECT / "Sessions" / f"{new_stem}.md").read_text(encoding="utf-8")
+        self.assertIn(f"supersedes: {stem}", new_note)
+        self.assertIn(f"[[{stem}]]", new_note)
+        self.assertIn("## Lesson", old_note)  # predecessor still intact, not overwritten
+
+        # predecessor now reports superseded, successor fresh; vault lints clean
+        report = drift(self.vault, self.PROJECT, self.repo)
+        self.assertEqual(self.entry(report, stem)["status"], "superseded")
+        self.assertEqual(self.entry(report, stem)["supersededBy"], new_stem)
+        self.assertEqual(self.entry(report, new_stem)["status"], "fresh")
+        self.assertEqual(report["stale"], [])
+        self.assertEqual(Linter(self.vault).run(), [])
+
+    def test_unversioned_session_is_unverifiable_not_guessed(self):
+        save_session(self.vault, self.payload("how-parsing-works", "unversioned"))
+        report = drift(self.vault, self.PROJECT, self.repo)
+        entry = self.entry(report, "2026-07-13 how-parsing-works")
+        self.assertEqual(entry["status"], "unverifiable")
+        self.assertNotIn("2026-07-13 how-parsing-works", report["stale"])
+
+    def test_unknown_commit_is_unverifiable(self):
+        save_session(self.vault, self.payload("how-parsing-works", "deadbee"))
+        report = drift(self.vault, self.PROJECT, self.repo)
+        self.assertEqual(self.entry(report, "2026-07-13 how-parsing-works")["status"], "unverifiable")
+
+    def test_non_repo_refused(self):
+        with self.assertRaises(RecallError):
+            drift(self.vault, "Atlas", Path(self._tmp.name) / "nowhere")
+
+    def test_refresh_must_name_existing_predecessor(self):
+        with self.assertRaises(NoteError):
+            save_session(self.vault, self.payload("refresh", self.commit, supersedes="2026-01-01 ghost"))
+
+    def test_refresh_lesson_must_link_predecessor(self):
+        save_session(self.vault, self.payload("how-parsing-works", self.commit))
+        bad = self.payload("refresh", self.commit, supersedes="2026-07-13 how-parsing-works")
+        bad["lesson"] = f"[[{self.PROJECT}/_glossary#Parsing|Parsing]] without the predecessor link."
+        with self.assertRaises(NoteError):
+            save_session(self.vault, bad)
 
 
 if __name__ == "__main__":

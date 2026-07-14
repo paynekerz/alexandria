@@ -483,6 +483,15 @@ def payload_problems(payload):
                 )
         if re.search(r"https?://", lesson):
             problems.append("lesson: external URLs belong under sources, never in the lesson prose (schema invariant 7)")
+    supersedes = payload.get("supersedes")
+    if supersedes is not None:
+        if not isinstance(supersedes, str) or not supersedes.strip():
+            problems.append("supersedes: must be the predecessor session's filename stem")
+        elif isinstance(lesson, str) and f"[[{supersedes}]]" not in lesson:
+            problems.append(
+                f"lesson: a refresh must link its predecessor in the prose ([[{supersedes}]]) — "
+                f"history is preserved, never overwritten (ROADMAP 4.3)"
+            )
     return problems
 
 
@@ -501,6 +510,8 @@ def _render_session_note(payload, concept_names):
     quiz = payload.get("quiz")
     if quiz:
         meta["quizScore"] = quiz["score"]
+    if payload.get("supersedes"):
+        meta["supersedes"] = payload["supersedes"]
     lines = [f"# {payload['title']}", "", "## Lesson", "", payload["lesson"].strip()]
     if payload["files"]:
         lines.extend(["", "## Files", ""])
@@ -527,6 +538,12 @@ def save_session(vault, payload):
     rel = f"{project}/Sessions/{stem}.md"
     if vault.exists(rel):
         raise VaultError(f"{rel} already exists — one note per session; pick a different slug")
+    supersedes = payload.get("supersedes")
+    if supersedes and not vault.exists(f"{project}/Sessions/{supersedes}.md"):
+        raise NoteError(
+            f"supersedes {supersedes!r}: no such session in {project}/Sessions — "
+            f"a refresh must name its existing predecessor"
+        )
     vault.ensure_project(project)
     concept_names = [c["name"] for c in payload["concepts"]]
     note_path = vault.write_note(rel, _render_session_note(payload, concept_names))

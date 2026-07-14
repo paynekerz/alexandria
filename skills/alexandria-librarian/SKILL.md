@@ -58,6 +58,7 @@ Collect these facts — each from its stated source, never guessed:
 | `sources` | Only external links that appear in the lesson and were verified alive when taught (teach's rule). Never add new ones at save time. |
 | `lesson` | The lesson prose. First mention of each concept must carry its glossary wiki-link `[[<Project>/_glossary#<Concept>\|<display>]]`; no raw URLs in the prose. |
 | `quiz` | Only if a comprehension check ran: score plus per-question results. |
+| `supersedes` | Only if this save is a drift refresh (`alexandria-recall` flagged the stale note and the user accepted): the predecessor note's filename stem. The lesson prose must link `[[<that stem>]]`. Never edit the predecessor. |
 
 Full payload format with a worked example: [references/payload.md](references/payload.md) — read it the first time you build a payload in a session.
 

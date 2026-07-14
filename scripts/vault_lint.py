@@ -83,6 +83,8 @@ def _session_meta_problems(meta, project, stem):
         problems.append("commit must be a non-empty string")
     if "quizScore" in meta and not re.match(r"^\d+/\d+$", str(meta["quizScore"])):
         problems.append(f"quizScore {meta['quizScore']!r} is not '<correct>/<asked>'")
+    if "supersedes" in meta and (not isinstance(meta["supersedes"], str) or not meta["supersedes"].strip()):
+        problems.append("supersedes must be a non-empty session filename stem")
     if meta.get("schemaVersion") != VAULT_SCHEMA_VERSION:
         problems.append(f"schemaVersion {meta.get('schemaVersion')!r} != {VAULT_SCHEMA_VERSION}")
     return problems
@@ -157,11 +159,16 @@ class Linter:
     # -- invariant 1 + 2 --
     def check_session_frontmatter(self):
         for project, sessions in self.sessions.items():
+            stems = {s["stem"] for s in sessions}
             for s in sessions:
                 rel = f"{project}/Sessions/{s['stem']}.md"
                 for problem in _session_meta_problems(s["meta"], project, s["stem"]):
                     self.add("frontmatter", rel, problem)
                     self.frontmatter_broken = True
+                sup = s["meta"].get("supersedes")
+                if isinstance(sup, str) and sup.strip() and (sup == s["stem"] or sup not in stems):
+                    self.add("dead-link", rel,
+                             f"supersedes {sup!r} — no such predecessor session in {project}/Sessions")
 
     # -- invariant 3: glossary <-> sessions, both directions --
     def check_glossaries(self):

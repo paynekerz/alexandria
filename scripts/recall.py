@@ -14,10 +14,17 @@ the other projects' glossaries and is run only after the user explicitly
 asked for cross-project material or granted permission when the skill
 announced a concept-index match.
 
+`drift` (ROADMAP 4.3) compares every session's stored commit + files[]
+against the repo's current git state (committed AND working-tree changes) and
+classifies each: fresh, stale (a covered file changed — offer a refresh),
+superseded (a newer note carries `supersedes` naming it), or unverifiable
+(no commit to compare — reported honestly, never guessed; Axiom 3).
+
 CLI:
     python recall.py search <Project> --query "<topic words>" [--vault PATH]
     python recall.py concept-check <Project> --concepts "<A,B,...>" [--vault PATH]
     python recall.py cross-project <Project> --concept "<Concept>" [--vault PATH]
+    python recall.py drift <Project> --repo <path> [--vault PATH]
 
 Exit codes: 0 ok (including zero matches), 1 config problem, 2 bad usage or
 unreadable vault/notes.
@@ -25,6 +32,7 @@ unreadable vault/notes.
 import argparse
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -184,6 +192,66 @@ def cross_project(vault, project, concept):
     return {"project": project, "concept": concept, "importedFrom": imported, "references": references}
 
 
+def _git(repo, *args):
+    try:
+        return subprocess.run(["git", *args], cwd=str(repo), capture_output=True, text=True)
+    except FileNotFoundError:
+        raise RecallError("git is not available on PATH — drift detection cannot run without it")
+
+
+def drift(vault, project, repo):
+    """Stored commit + files[] vs the repo now. Statuses, in decision order:
+    superseded > unverifiable (bad/absent commit) > stale (a file differs,
+    committed or working-tree) > unverifiable (a file absent from both commit
+    and worktree) > fresh."""
+    repo = Path(repo).resolve()
+    if not repo.is_dir() or _git(repo, "rev-parse", "--is-inside-work-tree").returncode != 0:
+        raise RecallError(f"{repo} is not a git repository — drift cannot be verified there (Axiom 3)")
+    if project not in list_projects(vault):
+        raise RecallError(f"no project folder named {project!r} in {vault.root}")
+    try:
+        sessions = load_sessions(vault, project)
+    except NoteError as e:
+        raise RecallError(f"unreadable session note — fix it (vault_lint.py) before drift can run: {e}")
+
+    superseded_by = {}
+    for s in sorted(sessions, key=lambda s: (s["meta"]["date"], s["stem"])):
+        sup = s["meta"].get("supersedes")
+        if isinstance(sup, str) and sup.strip():
+            superseded_by[sup] = s["stem"]
+
+    report = []
+    for s in sorted(sessions, key=lambda s: (s["meta"]["date"], s["stem"]), reverse=True):
+        m, stem = s["meta"], s["stem"]
+        entry = {"note": stem, "date": m["date"], "commit": m["commit"]}
+        if stem in superseded_by:
+            entry.update(status="superseded", supersededBy=superseded_by[stem])
+        elif m["commit"] == "unversioned":
+            entry.update(status="unverifiable", reason="saved without version control — no commit to compare")
+        elif _git(repo, "rev-parse", "--quiet", "--verify", m["commit"] + "^{commit}").returncode != 0:
+            entry.update(status="unverifiable", reason=f"stored commit {m['commit']} not found in {repo.name}")
+        else:
+            changed, missing = [], []
+            for f in m.get("files", []):
+                r = _git(repo, "diff", "--quiet", m["commit"], "--", f)
+                if r.returncode == 1:
+                    changed.append(f)
+                elif r.returncode != 0:
+                    raise RecallError(f"git diff failed for {f!r}: {r.stderr.strip()}")
+                elif not (repo / f).exists():
+                    missing.append(f)
+            if changed:
+                entry.update(status="stale", changedFiles=changed)
+            elif missing:
+                entry.update(status="unverifiable", missingFiles=missing,
+                             reason="listed file(s) absent from both the stored commit and the worktree")
+            else:
+                entry.update(status="fresh")
+        report.append(entry)
+    return {"project": project, "repo": str(repo), "sessions": report,
+            "stale": [e["note"] for e in report if e["status"] == "stale"]}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Read-only retrieval over an Alexandria vault.")
     parser.add_argument("--vault", help="vault root (default: vaultPath from ~/.alexandria/config.json)")
@@ -197,6 +265,9 @@ def main(argv=None):
     p_cross = sub.add_parser("cross-project", help="import one concept's material from other projects (permission-gated)")
     p_cross.add_argument("project", help="current project (excluded from results)")
     p_cross.add_argument("--concept", required=True, help="canonical concept name")
+    p_drift = sub.add_parser("drift", help="flag sessions whose covered files changed since their stored commit")
+    p_drift.add_argument("project", help="project folder name (current project)")
+    p_drift.add_argument("--repo", required=True, help="path to the project's git repository")
     args = parser.parse_args(argv)
     sys.stdout.reconfigure(errors="replace")
 
@@ -221,6 +292,9 @@ def main(argv=None):
             print()
         elif args.command == "cross-project":
             json.dump(cross_project(vault, args.project, args.concept), sys.stdout, indent=1)
+            print()
+        elif args.command == "drift":
+            json.dump(drift(vault, args.project, args.repo), sys.stdout, indent=1)
             print()
     except (RecallError, VaultError) as e:
         print(str(e), file=sys.stderr)

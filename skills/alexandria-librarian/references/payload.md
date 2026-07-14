@@ -17,6 +17,7 @@
 | `sources` | array | yes | Objects `{"title", "url"}`, verified-alive links only. May be `[]`. |
 | `lesson` | string | yes | Markdown prose of the `## Lesson` section. Must wiki-link each concept's glossary entry (`[[<project>/_glossary#<name>\|display]]`) at first mention. Must contain no raw URLs — external links belong in `sources`. |
 | `quiz` | object | no | `{"score": "<correct>/<asked>", "rows": [{"question", "result"}, ...]}`. Only when a comprehension check actually ran. |
+| `supersedes` | string | no | Only on a drift refresh (recall names the stale note): the predecessor session's filename stem, e.g. `"2026-06-25 retry-idempotency"`. Must name an existing note in this project's `Sessions/`, and `lesson` must link it (`[[<stem>]]`) — the script refuses otherwise. The predecessor is never modified. |
 
 The script composes everything else itself: frontmatter (fixed field order, `schemaVersion: 1`), `## Files` (from `files` + `commit`), `## Sources` (from `sources`), `## Comprehension` (from `quiz`).
 

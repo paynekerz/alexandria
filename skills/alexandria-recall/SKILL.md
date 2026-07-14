@@ -90,3 +90,24 @@ python "$SCRIPTS/recall.py" concept-check "<Project>" --concepts "<Concept A,Con
 This reads only the vault-root `_Concepts/` index — never a project folder — and matches canonical concept names exactly (no fuzzy matching). For each entry in `matches[]`, **announce it and ask before importing**: one AskUserQuestion naming the concept and the other project(s) — e.g. "Your Atlas library already covers Idempotency — import that lesson's material instead of re-teaching from scratch?" Only a yes runs `cross-project` (door a's command). A no — or no answer path at all — means the session stays current-project only, and teach explains from scratch.
 
 Never: import without the announce-and-ask, read another project's folder directly, or treat a fuzzy/partial name similarity as a match. `concepts` proposed mid-lesson by teach follow the same two doors — there is no third.
+
+## Step 5 — Drift check (whenever sessions are surfaced)
+
+A surfaced lesson may describe code that has since changed. Whenever Step 3 is about to present sessions — or the user asks whether a lesson is stale — run:
+
+```bash
+python "$SCRIPTS/recall.py" drift "<Project>" --repo "<repo root>"
+```
+
+Exit 0 → JSON with one entry per session, `status` ∈:
+
+| Status | Meaning | What you say |
+|---|---|---|
+| `fresh` | stored commit + files match the repo now (committed and working-tree state) | nothing — link the session normally |
+| `stale` | a covered file changed since the stored commit (`changedFiles` names them) | flag it: "this explanation predates changes to `<file>` — want a refreshed lesson?" |
+| `superseded` | a newer note names it in `supersedes` | link `supersededBy` instead; never offer to refresh an already-refreshed note |
+| `unverifiable` | no commit to compare (`unversioned`, commit absent from this repo, or file gone entirely) | state the `reason` verbatim — "can't verify" is the answer, never a guess (Axiom 3) |
+
+Exit 2 → show stderr verbatim (not a git repo, broken note); do not eyeball file dates or diff by hand instead.
+
+**The refresh flow** (user says yes to the offer): hand off to `alexandria-teach` to re-teach the target at the same depth, noting for the lesson what `changedFiles` lists. At save time, `alexandria-librarian`'s payload carries `supersedes: "<stale note stem>"` and the lesson prose links `[[<stale note stem>]]`. The predecessor is **never edited, overwritten, or deleted** — the refreshed lesson is a new note, and the old one keeps the learning history (docs/DECISIONS.md #10). `scripts/vault.py` enforces both the existing-predecessor check and the prose link.
