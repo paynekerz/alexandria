@@ -68,3 +68,25 @@ Never re-derive these facts by reading session notes, glossaries, or indexes dir
 - **Invoked by teach** — return the facts instead of prose: matched session stems to link, `taughtConcepts` for wiki-linking, and whether the target is already covered.
 
 Report only what the script returned. If the user claims something was covered and the search finds nothing, say the search found nothing — offer a different query wording, never a guessed link.
+
+## Step 4 — Cross-project references (restricted — two doors, both narrow)
+
+The default scope is absolute: Steps 1–3 read nothing outside the current project's folder. Another project's material enters a session through exactly two doors:
+
+**(a) The user explicitly asks** — "how did we handle this in Atlas?", "pull what my other projects have on this". The request itself is the permission. Run:
+
+```bash
+python "$SCRIPTS/recall.py" cross-project "<Project>" --concept "<Concept>"
+```
+
+Exit 0 → JSON with `importedFrom[]` (per other project: the glossary `definition` and `sessions` to link) and `references[]`. Present it clearly labeled by source project. Exit 2 → no concept index for that exact name; say so — do not go hunting through project folders as a fallback.
+
+**(b) Exact concept-index match** — when Step 2's results show a target concept is **not** in this project's `taughtConcepts` (teaching it here would be redundant if it's known elsewhere), you may check the cross-project index:
+
+```bash
+python "$SCRIPTS/recall.py" concept-check "<Project>" --concepts "<Concept A,Concept B>"
+```
+
+This reads only the vault-root `_Concepts/` index — never a project folder — and matches canonical concept names exactly (no fuzzy matching). For each entry in `matches[]`, **announce it and ask before importing**: one AskUserQuestion naming the concept and the other project(s) — e.g. "Your Atlas library already covers Idempotency — import that lesson's material instead of re-teaching from scratch?" Only a yes runs `cross-project` (door a's command). A no — or no answer path at all — means the session stays current-project only, and teach explains from scratch.
+
+Never: import without the announce-and-ask, read another project's folder directly, or treat a fuzzy/partial name similarity as a match. `concepts` proposed mid-lesson by teach follow the same two doors — there is no third.

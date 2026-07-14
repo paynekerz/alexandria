@@ -6,8 +6,18 @@ another project's folder — the current-project default scope (docs/DECISIONS.m
 #4) is enforced here, not by skill prose. Output is compact JSON so the model
 reads a summary, never raw vault files (Axiom 2).
 
+Cross-project access (ROADMAP 4.2) is split so restraint is mechanical:
+`concept-check` consults ONLY the vault-root `_Concepts/` index (exact
+filename match — never a fuzzy search, never a project folder) to learn
+whether another project teaches a concept; `cross-project` actually reads
+the other projects' glossaries and is run only after the user explicitly
+asked for cross-project material or granted permission when the skill
+announced a concept-index match.
+
 CLI:
     python recall.py search <Project> --query "<topic words>" [--vault PATH]
+    python recall.py concept-check <Project> --concepts "<A,B,...>" [--vault PATH]
+    python recall.py cross-project <Project> --concept "<Concept>" [--vault PATH]
 
 Exit codes: 0 ok (including zero matches), 1 config problem, 2 bad usage or
 unreadable vault/notes.
@@ -19,7 +29,15 @@ import sys
 from pathlib import Path
 
 from config import ConfigError
-from vault import NoteError, Vault, VaultError, list_projects, load_sessions, parse_glossary
+from vault import (
+    NoteError,
+    Vault,
+    VaultError,
+    list_projects,
+    load_sessions,
+    parse_frontmatter,
+    parse_glossary,
+)
 
 MIN_TERM_LEN = 3
 
@@ -102,6 +120,70 @@ def search(vault, project, query):
             "sessions": [entry for _, _, entry in scored], "glossary": glossary_hits}
 
 
+def concept_check(vault, project, concepts):
+    """Exact `_Concepts/<Concept>.md` lookups only — the one signal allowed to
+    suggest a cross-project reference without the user asking (ROADMAP 4.2b).
+    Reads nothing under any project folder."""
+    concepts_dir = vault.resolve("_Concepts")
+    # directory listing, not exists(): Windows would match case-insensitively,
+    # but canonical concept names are exact (docs/VAULT-SCHEMA.md section 2)
+    indexed = {p.stem for p in concepts_dir.glob("*.md")} if concepts_dir.is_dir() else set()
+    checked, matches = [], []
+    for name in concepts:
+        name = name.strip()
+        if not name:
+            continue
+        checked.append(name)
+        if name not in indexed:
+            continue
+        rel = f"_Concepts/{name}.md"
+        try:
+            meta = parse_frontmatter(vault.read_note(rel))[0]
+        except NoteError as e:
+            raise RecallError(f"unreadable concept index {rel} — fix it (vault_lint.py) first: {e}")
+        others = [p for p in meta.get("projects", []) if p != project]
+        if others:
+            matches.append({"concept": name, "file": rel, "otherProjects": others})
+    return {"project": project, "checked": checked, "matches": matches}
+
+
+def cross_project(vault, project, concept):
+    """The import path — reads OTHER projects' glossaries. Only ever run after
+    the user explicitly asked for cross-project material, or said yes when the
+    skill announced a concept-check match (ROADMAP 4.2)."""
+    concepts_dir = vault.resolve("_Concepts")
+    indexed = {p.stem for p in concepts_dir.glob("*.md")} if concepts_dir.is_dir() else set()
+    if concept not in indexed:
+        raise RecallError(
+            f"no cross-project concept index for {concept!r} — nothing to import "
+            f"(the index requires an exact match on the canonical concept name)"
+        )
+    rel = f"_Concepts/{concept}.md"
+    try:
+        meta, body = parse_frontmatter(vault.read_note(rel))
+    except NoteError as e:
+        raise RecallError(f"unreadable concept index {rel} — fix it (vault_lint.py) first: {e}")
+    imported = []
+    for other in meta.get("projects", []):
+        if other == project:
+            continue
+        entry = None
+        g_rel = f"{other}/_glossary.md"
+        if vault.exists(g_rel):
+            try:
+                entry = parse_glossary(vault.read_note(g_rel))[1].get(concept)
+            except NoteError as e:
+                raise RecallError(f"unreadable glossary {g_rel} — fix it (vault_lint.py) first: {e}")
+        imported.append({
+            "project": other,
+            "definition": entry["definition"] if entry else None,
+            "sessions": sorted(entry["sessions"]) if entry else [],
+        })
+    refs_match = re.search(r"^## References\n(.*?)(?=^## |\Z)", body, re.M | re.S)
+    references = re.findall(r"\[[^\]]+\]\(https?://[^)]+\)", refs_match.group(1)) if refs_match else []
+    return {"project": project, "concept": concept, "importedFrom": imported, "references": references}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Read-only retrieval over an Alexandria vault.")
     parser.add_argument("--vault", help="vault root (default: vaultPath from ~/.alexandria/config.json)")
@@ -109,6 +191,12 @@ def main(argv=None):
     p_search = sub.add_parser("search", help="search ONE project's sessions, concepts, and glossary")
     p_search.add_argument("project", help="project folder name (current project)")
     p_search.add_argument("--query", required=True, help="topic words to search for")
+    p_check = sub.add_parser("concept-check", help="exact _Concepts/ index lookups; never reads project folders")
+    p_check.add_argument("project", help="current project (excluded from results)")
+    p_check.add_argument("--concepts", required=True, help="comma-separated canonical concept names")
+    p_cross = sub.add_parser("cross-project", help="import one concept's material from other projects (permission-gated)")
+    p_cross.add_argument("project", help="current project (excluded from results)")
+    p_cross.add_argument("--concept", required=True, help="canonical concept name")
     args = parser.parse_args(argv)
     sys.stdout.reconfigure(errors="replace")
 
@@ -127,6 +215,12 @@ def main(argv=None):
     try:
         if args.command == "search":
             json.dump(search(vault, args.project, args.query), sys.stdout, indent=1)
+            print()
+        elif args.command == "concept-check":
+            json.dump(concept_check(vault, args.project, args.concepts.split(",")), sys.stdout, indent=1)
+            print()
+        elif args.command == "cross-project":
+            json.dump(cross_project(vault, args.project, args.concept), sys.stdout, indent=1)
             print()
     except (RecallError, VaultError) as e:
         print(str(e), file=sys.stderr)
