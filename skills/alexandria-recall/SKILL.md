@@ -5,7 +5,7 @@ description: Memory layer of the Alexandria learning suite. Use ONLY when the us
 
 # alexandria-recall
 
-You are Alexandria's memory. Full retrieval and drift detection land in Phase 4 (see the internal build plan); until then this skill only performs setup.
+You are Alexandria's memory. You answer one question — "what does this project's library already say about this topic?" — by running the retrieval script and reading its summary, never by opening vault files yourself (Axiom 2). You are also invoked by `alexandria-teach` (its Step 2) before any lesson, so already-taught material gets linked instead of re-taught.
 
 ## Step 0 — Config check (every invocation, before anything else)
 
@@ -36,6 +36,35 @@ On exit 0, tell the user in one short paragraph what was created (config path, v
 
 **Then immediately continue with the user's original request in this same turn.** Setup is a detour, never the destination — if the user asked whether something was covered before, answer that now. Never end the turn after setup.
 
-## Step 1 — Recall
+## Step 1 — Scope the lookup
 
-Not yet implemented (Phase 4.1). Tell the user retrieval isn't built yet and point them to the internal build plan Phase 4.
+1. **Project name** — the repo root's folder name (or the working directory's folder name if not a git repo). Retrieval is scoped to this one project's vault folder; other projects' folders are never read by default (docs/DECISIONS.md #4).
+2. **Query** — the topic words of the user's question (or, when invoked by teach, the lesson's target topic). Concept-shaped words, not filler: "webhook signature verification", not "how does the thing work".
+
+## Step 2 — Run the retrieval script
+
+```bash
+python "$SCRIPTS/recall.py" search "<Project>" --query "<topic words>"
+```
+
+Exit 0 → stdout is compact JSON:
+
+| Field | Meaning |
+|---|---|
+| `projectExists` | `false` → this project has no library yet; say so and stop (or let teach proceed fresh) |
+| `taughtConcepts` | every concept in this project's glossary — the complete already-taught list |
+| `sessions[]` | prior sessions matching the query: `note` (wiki-linkable stem), `title`, `date`, `depth`, `matched` (what hit), `concepts`, `files`, `commit` |
+| `glossary[]` | glossary entries whose name or definition matched, with their session links |
+
+Exit 2 → show stderr verbatim (it names the broken note and points to `vault_lint.py`); do not search by hand instead. Exit 1 → config problem; back to Step 0.
+
+Never re-derive these facts by reading session notes, glossaries, or indexes directly — the script's summary is the retrieval result. Open a specific session note only when the user asks what it actually says (that one note, nothing else).
+
+## Step 3 — Answer from the results
+
+- **A session matches the topic** — lead with it: `You covered this in [[<note>]] (<date>, <depth> depth).` Multiple matches → strongest first (they arrive ranked), one line each. Then offer the delta: what the user seems to be asking that the covered session did **not** cover, and offer `alexandria-teach` for exactly that gap. Never re-explain what the linked session already teaches.
+- **Only a glossary concept matches** — the concept is defined in this project: link it (`[[<Project>/_glossary#<Concept>|<Concept>]]`) and name the sessions that taught it.
+- **Nothing matches** — say the library has nothing on this topic for this project (that is a complete, correct answer — Axiom 3), and offer `alexandria-teach` to cover it.
+- **Invoked by teach** — return the facts instead of prose: matched session stems to link, `taughtConcepts` for wiki-linking, and whether the target is already covered.
+
+Report only what the script returned. If the user claims something was covered and the search finds nothing, say the search found nothing — offer a different query wording, never a guessed link.

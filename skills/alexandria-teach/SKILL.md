@@ -46,11 +46,19 @@ Establish three things before reading any code:
 
 ## Step 2 — Library check (before explaining anything)
 
-Never teach a concept this project's library already covers. Before the lesson:
+Never teach a concept this project's library already covers. Before the lesson, run recall's retrieval script (read-only, scoped to this project's folder — never open vault files directly):
 
-1. Read `<vaultPath>/<Project>/_glossary.md` if it exists → the list of **already-taught concepts** and their session links.
-2. Read `<vaultPath>/<Project>/_index.md` if it exists → prior sessions; if one clearly covers the same target, tell the user ("you covered this in [[...]]") and offer a delta rather than a full re-teach.
-3. Read **only** this project's folder. Other projects' folders are off-limits — cross-project references are `alexandria-recall`'s job (Phase 4), and only on explicit request or exact concept-index match.
+```bash
+python "$SCRIPTS/recall.py" search "<Project>" --query "<the lesson's target topic words>"
+```
+
+From the JSON on stdout (exit 0):
+
+1. `taughtConcepts` → the list of **already-taught concepts** for wiki-linking below. `projectExists: false` → no library yet; teach fresh.
+2. `sessions[]` → prior sessions matching the target; if one clearly covers the same target, tell the user ("you covered this in [[<note>]]") and offer a delta rather than a full re-teach.
+3. The script reads **only** this project's folder. Other projects' folders are off-limits — cross-project references are `alexandria-recall`'s job, and only on explicit request or exact concept-index match.
+
+Exit 2 → show stderr verbatim (a broken note is blocking retrieval; it names `vault_lint.py`); ask before teaching without the library check.
 
 In the lesson, an already-taught concept gets a wiki-link on first mention — `[[<Project>/_glossary#<Concept>|<natural phrasing>]]` — plus at most one reminder clause. It never gets re-taught.
 
