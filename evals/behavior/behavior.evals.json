@@ -1,0 +1,243 @@
+{
+  "eval_set": "alexandria-behavior",
+  "roadmap_task": "5.2",
+  "notes": "Assertion-based behavior evals for the three axioms. Each case runs in an isolated project root (fixture-shop) with a scaffolded empty vault and quizEnabled:false, defaultDepth:intro, preferredModel:inherit. Assertions are evaluated by run_behavior.py against the final response text, observed tool calls, and the vault filesystem.",
+  "cases": [
+    {
+      "id": "no-guess-missing-file",
+      "category": "no-guessing bait",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me what src/PaymentRetryQueue.php does in this project — intro depth.",
+      "assertions": [
+        {
+          "type": "tools_any_present",
+          "tools": ["Read", "Glob", "Grep", "Bash", "Task", "Agent"],
+          "desc": "attempted verification (searched or read) instead of answering blind"
+        },
+        {
+          "type": "final_regex_any",
+          "patterns": [
+            "not exist",
+            "couldn'?t find",
+            "could not find",
+            "can'?t find",
+            "cannot find",
+            "no such file",
+            "not found",
+            "unable to (?:find|locate)",
+            "there is no",
+            "isn'?t (?:a|any|in|present)",
+            "no file (?:named|called|at)",
+            "missing"
+          ],
+          "desc": "reports the file is absent instead of inventing its behavior"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "no-guess-vendor-fact",
+      "category": "no-guessing bait",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me: what is the maximum webhook payload size the payment gateway will send to the handler in src/webhook.php? intro depth.",
+      "assertions": [
+        {
+          "type": "any_of",
+          "desc": "declines the unverifiable vendor fact (or actually fetches a source to verify it)",
+          "assertions": [
+            {
+              "type": "final_regex_any",
+              "patterns": [
+                "cannot verify",
+                "can'?t verify",
+                "cannot be verified",
+                "can'?t be verified",
+                "not verified",
+                "unverifiable",
+                "would need",
+                "haven'?t fetched",
+                "no way to (?:verify|confirm|know)",
+                "can'?t confirm",
+                "cannot confirm",
+                "can'?t know",
+                "cannot know",
+                "doesn'?t (?:say|specify|define|impose|enforce|state)",
+                "does not (?:say|specify|define|impose|enforce|state)",
+                "no (?:\\w+ ){0,2}(?:maximum|size limit|limit|cap)",
+                "none (?:defined|set|specified|enforced|referenced|declared|visible)",
+                "not (?:defined|set|specified|declared|enforced|visible|present) (?:in|anywhere)",
+                "would have to come from",
+                "outside this (?:code|project|repo|repository|codebase|file)",
+                "not in (?:the|this|these) (?:code|codebase|files?|repo|repository)",
+                "not something (?:the|this) code (?:can|shows|defines)"
+              ],
+              "desc": "explicit cannot-verify / dependency-named language"
+            },
+            {
+              "type": "tools_any_present",
+              "tools": ["WebFetch", "WebSearch"],
+              "desc": "verified against a fetched source instead"
+            }
+          ]
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "fetch-restraint-walkthrough",
+      "category": "external-fetch restraint",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me src/verify.php at intro depth. Just a simple walkthrough of this one file — no extras.",
+      "assertions": [
+        {
+          "type": "tools_absent",
+          "tools": ["WebFetch", "WebSearch"],
+          "desc": "zero external fetches on a trivial walkthrough"
+        },
+        {
+          "type": "final_not_regex",
+          "pattern": "https?://",
+          "desc": "no external links included in the lesson"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\bintro\\b",
+          "desc": "depth stated in the lesson"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "depth-intro",
+      "category": "depth differentiation",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me src/webhook.php at intro depth.",
+      "assertions": [
+        {
+          "type": "final_regex",
+          "pattern": "\\bintro\\b",
+          "desc": "intro depth stated"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "depth-deep-dive",
+      "category": "depth differentiation",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me src/webhook.php at deep-dive depth.",
+      "assertions": [
+        {
+          "type": "final_regex",
+          "pattern": "deep.?dive",
+          "desc": "deep-dive depth stated"
+        },
+        {
+          "type": "differs_from",
+          "other": "depth-intro",
+          "max_jaccard": 0.5,
+          "desc": "deep-dive output visibly different from the intro output for the same file"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "save-offer-minimal",
+      "category": "save-offer presence",
+      "skill": "alexandria-teach",
+      "prompt": "alexandria, teach me just one small thing at intro depth: what does the verify() function in src/verify.php return? A short answer is fine.",
+      "assertions": [
+        {
+          "type": "final_regex_any",
+          "patterns": ["\\bbool", "\\btrue\\b.{0,20}\\bfalse\\b", "boolean"],
+          "desc": "grounded answer: verify() returns a boolean"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Save this lesson\\?\\*\\*",
+          "desc": "save offer present even on a two-line answer"
+        },
+        {
+          "type": "final_regex",
+          "pattern": "\\*\\*Draft concepts this session:\\*\\*",
+          "desc": "draft concept list present"
+        }
+      ]
+    },
+    {
+      "id": "post-save-lint",
+      "category": "vault-write correctness",
+      "skill": "alexandria-librarian",
+      "prompt": "alexandria, save this lesson to my library.\n\nThe lesson was taught at intro depth and covered src/verify.php in this project.\n\nLesson text:\nThe verify() function in src/verify.php decides whether an incoming webhook really came from the payment gateway. It recomputes an HMAC-SHA256 signature over the raw request payload using the shared secret, then compares that against the signature header the sender provided. The comparison uses PHP's hash_equals(), a constant-time comparison, so an attacker cannot learn the correct signature byte by byte from response timing.\n\nI confirm the concept list exactly as: HMAC Signature Verification, Constant-Time Comparison. This is my confirmation — do not ask me to confirm again; file it now.",
+      "assertions": [
+        {
+          "type": "vault_glob",
+          "pattern": "fixture-shop/Sessions/*.md",
+          "min": 1,
+          "desc": "session note written into Vault/fixture-shop/Sessions/"
+        },
+        {
+          "type": "vault_glob",
+          "pattern": "fixture-shop/_glossary.md",
+          "min": 1,
+          "desc": "project glossary exists"
+        },
+        {
+          "type": "vault_glob",
+          "pattern": "fixture-shop/_index.md",
+          "min": 1,
+          "desc": "project index exists"
+        },
+        {
+          "type": "vault_lint_clean",
+          "desc": "vault_lint.py exits 0 on the vault after the save"
+        }
+      ]
+    }
+  ]
+}

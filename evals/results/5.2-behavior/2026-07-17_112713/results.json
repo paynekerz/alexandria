@@ -1,0 +1,580 @@
+{
+  "metadata": {
+    "task": "5.2-behavior",
+    "started": "2026-07-17T11:27:13-05:00",
+    "repo_commit": "b2833f4",
+    "eval_set": "evals\\behavior\\behavior.evals.json",
+    "runs_requested": 3,
+    "cases": [
+      "no-guess-missing-file",
+      "no-guess-vendor-fact",
+      "fetch-restraint-walkthrough",
+      "depth-intro",
+      "depth-deep-dive",
+      "save-offer-minimal",
+      "post-save-lint"
+    ],
+    "timeout_s": 900,
+    "num_workers": 3
+  },
+  "runs": [
+    {
+      "run": 1,
+      "cases": [
+        {
+          "id": "no-guess-vendor-fact",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.16222284999999997,
+          "duration_s": 96.9,
+          "tools": [
+            "Bash",
+            "Glob",
+            "Grep",
+            "Read",
+            "Skill"
+          ],
+          "final": "---\n\n**Depth: intro**\n\n## What `src/webhook.php` does\n\nThink of a webhook like a text message your payment gateway sends your store whenever something happens \u2014 a payment succeeds, a refund processes, a card is declined. Your store needs a \"mailbox\" to receive those messages. That mailbox is the `handle_webhook` function in this file.\n\nHere's what that function receives each time a message arrives:\n\n- **`$rawBody`** \u2014 the full text of the message, exactly as the gateway sent it (in a format called JSON, which is just structured text)\n- **`$headers`** \u2014 metadata attached to the message, like an envelope (who sent it, how it was signed)\n- **`$secret`** \u2014 a private password your store and the gateway both know\n\nThe function then does three things, in order:\n\n1. **Checks the signature.** It calls `verify()` (defined in `src/verify.php`, which this file loads at the top) to confirm the message genuinely came from the gateway \u2014 not from an attacker pretending to be the gateway. If the signature is wrong, it immediately replies with code `401` (\"not authorized\") and stops.\n\n2. **Parses the message.** It converts the raw JSON text into a PHP array it can work with. If the message is malformed or missing a required `id` field, it replies `400` (\"bad request\") and stops.\n\n3. **Logs the event.** It writes one line to `events.log` \u2014 the current timestamp plus the event's `id` \u2014 and replies `200` (\"OK, got it\").\n\nThe gateway treats any reply that isn't `200` as a failure and will retry delivery.\n\n---\n\n## Your specific question: is there a maximum payload size?\n\n**The short answer: this code enforces no maximum.**\n\nLooking at the function signature:\n\n```php\nfunction handle_webhook(string $rawBody, array $headers, string $secret): int\n```\n\nThe `$rawBody` parameter is just a PHP string. PHP strings have no built-in size cap \u2014 the function will accept whatever is passed to it, large or small, without complaint.\n\nThere is also **no size check anywhere in the function body** \u2014 no `strlen()` guard, no byte limit, nothing.\n\n**What I cannot tell you from this code alone:**\n\nThe question \"what maximum size will the payment gateway *send*?\" is about the gateway's own behavior, not about this file. That answer lives in the gateway's documentation, which I have not fetched this session. I cannot state a number \u2014 not verified this session; would need the gateway's API docs to confirm.\n\nThere's a second real-world constraint worth knowing exists, even though it's not in this PHP file: your web server (Apache/Nginx) and PHP itself have configuration settings (`post_max_size`, `max_input_size`) that cap how large a request body can be before PHP even sees it. Those limits are set in server config files, not in this code. If an incoming payload exceeded them, this function would receive a truncated or empty body \u2014 and the signature check would fail, returning `401`.\n\n---\n\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** Webhook Handler, Signature Verification, JSON Parsing, HTTP Status Codes, PHP String Parameters, Server-side Payload Limits",
+          "assertions": [
+            {
+              "type": "any_of",
+              "desc": "declines the unverifiable vendor fact (or actually fetches a source to verify it)",
+              "passed": true,
+              "evidence": "[PASS] explicit cannot-verify / dependency-named language: matched 'not verified': documentation, which I have not fetched this session. I cannot state a number \u2014 not verified this session; would need the gateway's API docs to confirm.  There's a second r; [fail] verified against a fetched source instead: none of ['WebFetch', 'WebSearch'] called (tools seen: ['Bash', 'Glob', 'Grep', 'Read', 'Skill'])"
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": "ated or empty body \u2014 and the signature check would fail, returning `401`.  ---  **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** Webhook Handler, Signature Verification, JSON Parsing, HTTP Status Codes, PHP S"
+            }
+          ],
+          "wall_s": 103.4
+        },
+        {
+          "id": "no-guess-missing-file",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.17641655000000003,
+          "duration_s": 100.7,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Glob",
+            "Read",
+            "Skill"
+          ],
+          "final": "`src/PaymentRetryQueue.php` does not exist in this project. The `src/` directory only contains:\n\n- `src/verify.php`\n- `src/webhook.php`\n\nDid you mean one of those? If so, just say which one and I'll teach it.\n\n---\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** *(none \u2014 lesson halted; target file not found)*",
+          "assertions": [
+            {
+              "type": "tools_any_present",
+              "desc": "attempted verification (searched or read) instead of answering blind",
+              "passed": true,
+              "evidence": "called: ['Read', 'Glob', 'Bash', 'Agent']"
+            },
+            {
+              "type": "final_regex_any",
+              "desc": "reports the file is absent instead of inventing its behavior",
+              "passed": true,
+              "evidence": "matched 'not exist': `src/PaymentRetryQueue.php` does not exist in this project. The `src/` directory only contains:  - `src/verify.php` - `src"
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": "`  Did you mean one of those? If so, just say which one and I'll teach it.  --- **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** *(none \u2014 lesson halted; target file not found)*"
+            }
+          ],
+          "wall_s": 208.8
+        },
+        {
+          "id": "fetch-restraint-walkthrough",
+          "category": "external-fetch restraint",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.20986495,
+          "duration_s": 120.8,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Read",
+            "Skill"
+          ],
+          "final": "**Depth: intro** | **File:** `src/verify.php` (commit `7534353`)\n\n---\n\n## `src/verify.php` \u2014 A Simple Walkthrough\n\n### What problem does this file solve?\n\nImagine your shop's checkout sends a confirmation email whenever an order is paid. Now imagine anyone on the internet could trigger that email just by sending a fake \"payment succeeded\" message to your server. That is the exact attack this file prevents.\n\nWhen a payment gateway processes a payment, it notifies your shop's server by sending an HTTP request \u2014 a message over the internet \u2014 to a URL your server is listening on. That kind of automated notification is called a **webhook**: the gateway \"hooks\" into your system and pushes a message the moment something happens.\n\nThe problem: anyone can send an HTTP request to any public URL. So before your server acts on a webhook, it needs to answer: *\"Did this actually come from the gateway, or is someone impersonating it?\"*\n\nThis file answers that question.\n\n---\n\n### The trust mechanism: a shared secret and a signature\n\nThe gateway and your server both privately agreed on a password-like string called a **shared secret**. Neither side ever sends it over the internet \u2014 it stays locked away on both sides.\n\nWhen the gateway sends a webhook, it takes the body of the message (the **payload** \u2014 e.g., \"payment of $42.00 succeeded\") and runs it through a mathematical algorithm along with the shared secret. The result is a short scrambled string called a **signature** \u2014 think of it like a wax seal on an envelope. The seal proves the sender had the right secret to make it.\n\nThe gateway attaches this signature to the request in a special metadata field called a **header**, named `X-Signature`.\n\nYour server receives the webhook, independently runs the same algorithm on the same payload using its own copy of the secret, and compares results. Match = genuine. No match = reject.\n\n---\n\n### The algorithm: HMAC-SHA256\n\nThe algorithm used is **HMAC-SHA256**:\n\n- **SHA-256** is a one-way scrambling function \u2014 feed it any text and it produces a fixed-length fingerprint. \"One-way\" means you cannot reverse it to recover the original.\n- **HMAC** wraps SHA-256 so the secret is baked in. Without the secret, an attacker cannot produce a valid fingerprint even if they know the payload.\n\n---\n\n### Walking through the code\n\nThe file defines one **function** \u2014 a named, reusable block of instructions, like a recipe. This function is named `verify` and takes three ingredients:\n\n- `$payload` \u2014 the raw body of the incoming webhook.\n- `$signature` \u2014 the signature the gateway attached (from the `X-Signature` header).\n- `$secret` \u2014 your server's copy of the shared secret.\n\nThe `: bool` means it returns a yes-or-no answer: `true` (genuine) or `false` (reject).\n\n**Line 1 \u2014 recompute the expected signature:**\n```php\n$expected = hash_hmac('sha256', $payload, $secret);\n```\nPHP's built-in `hash_hmac` runs HMAC-SHA256 on the payload using the secret, storing your server's independently-calculated fingerprint in `$expected`.\n\n**Line 2 \u2014 compare:**\n```php\nreturn hash_equals($expected, $signature);\n```\n`hash_equals` compares your computed fingerprint against what the gateway sent. Match \u2192 `true`. No match \u2192 `false`.\n\n---\n\n### Why `hash_equals` instead of `===`?\n\nA normal equality check in PHP stops the moment it finds the first differing character \u2014 faster mismatches exit earlier.\n\nAn attacker can exploit this. By sending thousands of slightly varied fake signatures and measuring how long your server takes to reject each one, they can figure out correct characters one by one and eventually forge a valid signature. This is called a **timing attack**.\n\n`hash_equals` always takes the same amount of time to compare two strings, no matter where they differ. No early exit \u2014 an attacker measuring response times learns nothing. That's what \"constant time regardless of where the strings first differ\" means in the file's comment.\n\n---\n\n**Files read:** [`src/verify.php`](src/verify.php) (commit `7534353`)\n**Sources fetched:** none\n\n---\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** webhook, HMAC, cryptographic signature, shared secret, one-way hash function, constant-time comparison, timing attack, HTTP request, request header",
+          "assertions": [
+            {
+              "type": "tools_absent",
+              "desc": "zero external fetches on a trivial walkthrough",
+              "passed": true,
+              "evidence": "none of ['WebFetch', 'WebSearch'] called"
+            },
+            {
+              "type": "final_not_regex",
+              "desc": "no external links included in the lesson",
+              "passed": true,
+              "evidence": "clean"
+            },
+            {
+              "type": "final_regex",
+              "desc": "depth stated in the lesson",
+              "passed": true,
+              "evidence": "**Depth: intro** | **File:** `src/verify.php` (commit `7534353`)  ---  ## `src/verify.php` \u2014 A"
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": "/verify.php`](src/verify.php) (commit `7534353`) **Sources fetched:** none  --- **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** webhook, HMAC, cryptographic signature, shared secret, one-way hash function, c"
+            }
+          ],
+          "wall_s": 228.8
+        },
+        {
+          "id": "depth-deep-dive",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.28973065,
+          "duration_s": 223.5,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Glob",
+            "Read",
+            "Skill"
+          ],
+          "final": "---\n\n**Depth: deep-dive** | Project: `fixture-shop` | Commit: `d988178`\n\n---\n\n# Deep Dive: `src/webhook.php`\n\n## Overview\n\n`src/webhook.php` defines a single function, `handle_webhook`, that is the complete inbound webhook processing pipeline for fixture-shop's payment gateway integration. It does three things in strict sequence: authenticate the request, parse and validate the payload, then append to an event log. The function returns an HTTP status integer; the caller is responsible for writing that integer into the actual HTTP response.\n\nThere are exactly two PHP source files in this project \u2014 `webhook.php` and `verify.php` \u2014 and no framework, no autoloader, no database, no queue. That is an intentional design choice with meaningful trade-offs covered below.\n\n---\n\n## Line-by-Level Internals\n\n### `require __DIR__ . '/verify.php'` ([`src/webhook.php:3`](src/webhook.php))\n\n`require` (not `require_once`) is used here. In this file that is safe because `webhook.php` is itself a library module \u2014 it defines a function and is not expected to be included multiple times by a caller that also includes `verify.php` separately. If a future caller ever includes both files, PHP will fatal with \"Cannot redeclare function verify\". This is a latent hazard, not a current one.\n\n`__DIR__` resolves to the directory of the file being executed, not the working directory of the process. That makes the path robust regardless of how or from where PHP is invoked.\n\n---\n\n### Signature: `function handle_webhook(string $rawBody, array $headers, string $secret): int` ([`src/webhook.php:9`](src/webhook.php))\n\nAll three parameters use strict types at the function signature. PHP enforces these according to `declare(strict_types=1)` in the *calling* file, not this one \u2014 no such declaration exists in `webhook.php`. In practice the types are always correct at the callsite, so this is dormant, but worth knowing if you ever inline a test caller.\n\nThe return type `int` \u2014 an HTTP status code \u2014 is the clean boundary: `handle_webhook` is fully unit-testable without mocking `http_response_code()`. The actual HTTP write lives in whatever entrypoint includes this file. That entrypoint is not in the committed codebase.\n\n---\n\n### Step 1 \u2014 Signature verification ([`src/webhook.php:11\u201314`](src/webhook.php))\n\n```php\n$signature = $headers['X-Signature'] ?? '';\nif (!verify($rawBody, $signature, $secret)) {\n    return 401;\n}\n```\n\nThe null-coalescing fallback to `''` means a **missing** `X-Signature` header is indistinguishable from a **present but empty** one \u2014 both fail `verify()` and return 401. Correct behavior, but the distinction is invisible to the caller. If your observability pipeline cares about \"missing header\" vs \"bad signature,\" you cannot differentiate from this return code.\n\nThe 401 choice is a semantic slight misfit. RFC 7235 defines 401 as requiring a `WWW-Authenticate` challenge, which webhook endpoints never issue. 403 or 400 are equally defensible. The docblock comment (lines 5\u20138) implies the gateway distinguishes only 200 vs non-200, making this distinction academic. Whether the gateway documents behavior for 4xx vs 5xx retry handling is not verified this session.\n\n---\n\n### `verify()` internals ([`src/verify.php:11\u201316`](src/verify.php))\n\n```php\nfunction verify(string $payload, string $signature, string $secret): bool\n{\n    $expected = hash_hmac('sha256', $payload, $secret);\n    return hash_equals($expected, $signature);\n}\n```\n\n`hash_hmac('sha256', ...)` without `$raw_output = true` produces a lowercase 64-character hex string. This is the canonical format used across the payment industry.\n\n`hash_equals` is the critical detail. PHP's `===` short-circuits on the first mismatched byte, leaking information about how many leading bytes matched via response latency. `hash_equals` runs in constant time regardless of where the strings diverge, eliminating that timing attack vector. It also returns `false` on length mismatch without leaking which string is longer.\n\n**Argument order matters:** `hash_equals($expected, $signature)`. PHP's docs specify that the *first* argument's length governs the comparison. Since `$expected` is always 64 hex chars (fixed HMAC output), the comparison length is constant regardless of what `$signature` contains. This is the correct order.\n\n**Edge case:** `hash_equals` in PHP 8 throws `TypeError` if either argument is not a string. The `?? ''` on line 11 of `webhook.php` is what prevents a `null` header value from causing a crash here \u2014 the two files are tightly coupled through this assumption.\n\n---\n\n### Step 2 \u2014 JSON decode and structural validation ([`src/webhook.php:16\u201319`](src/webhook.php))\n\n```php\n$event = json_decode($rawBody, true);\nif (!is_array($event) || !isset($event['id'])) {\n    return 400;\n}\n```\n\n`json_decode($rawBody, true)` returns `null` on parse failure and `false` if `$rawBody` is the literal string `\"false\"` (a PHP JSON-decode quirk). The guard `!is_array($event)` catches all three failure modes: `null`, `false`, and any JSON scalar that decoded correctly but is not an object/array. `json_last_error()` is never called, so no diagnostic is available \u2014 the caller only sees 400.\n\n`!isset($event['id'])` fails if `'id'` is absent *or* if its value is explicitly `null`. `array_key_exists('id', $event)` would pass for null values; `isset` does not. Whether `\"id\": null` should be rejected is not documented \u2014 this is an implicit behavior difference worth knowing if the gateway can ever emit null IDs.\n\nType, range, and format of the ID value are not validated. A string, integer, nested array, or object at `$event['id']` all pass and feed directly into the log.\n\n---\n\n### Step 3 \u2014 Log write ([`src/webhook.php:21\u201322`](src/webhook.php))\n\n```php\n$line = date('c') . ' ' . $event['id'] . \"\\n\";\nfile_put_contents(__DIR__ . '/../events.log', $line, FILE_APPEND | LOCK_EX);\n```\n\n`date('c')` uses PHP's `date.timezone` INI setting, not UTC explicitly. A misconfigured server timezone silently corrupts log timestamps. `gmdate('c')` or an explicit `new DateTime('now', new DateTimeZone('UTC'))` would eliminate that dependency.\n\n`$event['id']` is interpolated without sanitization. Since the write target is a flat text file (not a shell command, SQL query, or HTML response), there is no classic injection vector \u2014 but a multi-line ID (e.g., `\"id\": \"abc\\ndef\"`) corrupts the log's one-line-per-event format. The HMAC check already verified the payload is authentic, so this is a trust-the-gateway assumption made silently.\n\n`FILE_APPEND | LOCK_EX` is the correct pair for concurrent safety: `FILE_APPEND` atomically seeks to end-of-file before each write on POSIX systems; `LOCK_EX` acquires an exclusive `flock` lock before writing. Two simultaneous deliveries will serialize correctly without interleaving bytes.\n\n**Caveats:**\n- `LOCK_EX` only protects processes that also use `flock`. A log-rotation script writing directly bypasses the lock entirely.\n- `flock` semantics on NFS-mounted filesystems are unreliable \u2014 not verified this session whether fixture-shop's deployment uses NFS.\n\n**The silent failure mode:** `file_put_contents` returns `false` on I/O error (full disk, permission denied, read-only mount). That return value is discarded. A filesystem failure produces a PHP warning, but `handle_webhook` still returns 200. The gateway sees success, stops retrying, and the event is **silently lost**. This is the most consequential failure mode in the file.\n\n---\n\n## Architecture and Design Trade-offs\n\n### Flat-file log\n\nThe entire persistence layer is a single flat file. Appropriate for a fixture/demo shop under low volume; would become a serialization bottleneck under concurrent event load (every write acquires an exclusive lock) and is not rotation-safe without external tooling.\n\n### No entry point in committed code\n\nThere is no `index.php`, router, or framework bootstrap in the repository. `webhook.php` is a pure library module: receives pre-parsed inputs, returns a status int. This is correct separation of concerns but means the HTTP plumbing is out-of-band.\n\n### No replay protection\n\nThere is no idempotency mechanism. Gateway retries \u2014 which are the expected behavior on non-200 responses or network timeouts \u2014 will append duplicate entries to the log. For a log-only handler this produces duplicates rather than duplicate financial effects, but it is an assumption worth making explicit.\n\n### Trust boundary\n\nThe HMAC check is the only trust gate. Everything after line 14 runs under the assumption of authenticity. There is no `$event['type']` dispatch \u2014 any event type the gateway sends (payment, refund, dispute) goes to the same log entry. Again, appropriate for a fixture.\n\n---\n\n## Data Flow\n\n```\nCaller\n  \u2502\n  \u251c\u2500\u2500\u2500 rawBody \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n  \u2502                                          \u2502\n  \u251c\u2500\u2500\u2500 headers['X-Signature'] \u2500\u2500\u25ba verify()  \u2502\n  \u2502         \u2514\u2500\u2500\u2500 secret \u2500\u2500\u2500\u2500\u2500\u2500\u25ba  (HMAC-SHA256 on rawBody)\n  \u2502                                  \u2502\n  \u2502                                [bool]\n  \u2502                                  \u2502\n  \u2502                            false \u2500\u25ba return 401\n  \u2502                                  \u2502\n  \u2502                                 true\n  \u2502                                  \u2502\n  \u2514\u2500\u2500\u2500 rawBody \u2500\u2500\u25ba json_decode() \u2500\u2500\u2500\u25ba\u2502\n                       \u2502\n                    failure/missing 'id' \u2500\u25ba return 400\n                       \u2502\n                    success\n                       \u2502\n            file_put_contents(events.log, FILE_APPEND | LOCK_EX)\n                       \u2502  (return value discarded \u2014 silent failure risk)\n                       \u2502\n                   return 200\n```\n\n---\n\n**Files read this session:**\n- [`src/webhook.php`](src/webhook.php)\n- [`src/verify.php`](src/verify.php)\n\n**External sources fetched:** none\n\n---\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** HMAC-SHA256 webhook signature verification, timing attack / constant-time comparison, PHP `hash_equals`, `file_put_contents` with `FILE_APPEND | LOCK_EX`, flat-file event log, webhook retry semantics, HTTP status code contract, idempotency / replay protection, trust boundary, JSON decode edge cases (`json_last_error` / `isset` vs `array_key_exists`), PHP `require` vs `require_once` redeclaration hazard, `date.timezone` INI coupling, `flock` semantics on NFS",
+          "assertions": [
+            {
+              "type": "final_regex",
+              "desc": "deep-dive depth stated",
+              "passed": true,
+              "evidence": "---  **Depth: deep-dive** | Project: `fixture-shop` | Commit: `d988178`  ---  # Deep Dive: `src/webhook"
+            },
+            {
+              "type": "differs_from",
+              "desc": "deep-dive output visibly different from the intro output for the same file",
+              "passed": true,
+              "evidence": "jaccard=0.23 vs depth-intro (threshold 0.50)"
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": ") - [`src/verify.php`](src/verify.php)  **External sources fetched:** none  --- **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** HMAC-SHA256 webhook signature verification, timing attack / constant-time compa"
+            }
+          ],
+          "wall_s": 249.2
+        },
+        {
+          "id": "save-offer-minimal",
+          "category": "save-offer presence",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.14157075,
+          "duration_s": 79.4,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Read",
+            "Skill"
+          ],
+          "final": "**Depth: intro**\n\n`verify()` returns a **boolean** \u2014 `true` or `false`.\n\nIt answers one question: did this message genuinely come from your payment gateway, or could it be faked?\n\nHere's the two-step logic:\n\n1. **Recompute the fingerprint** (line 13) \u2014 it takes the raw payload and your shared secret and runs them through HMAC to produce `$expected`. The gateway did this same math before sending.\n2. **Compare fingerprints** (line 15) \u2014 it compares the gateway's signature against `$expected` using `hash_equals()`, which is a constant-time comparison (safer than `==` because plain equality can leak information through timing differences).\n\n`true` = fingerprints match, message is genuine. `false` = mismatch, reject it.\n\n---\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** Webhook, HMAC / message authentication code, Shared secret, Constant-time comparison, Boolean return value",
+          "assertions": [
+            {
+              "type": "final_regex_any",
+              "desc": "grounded answer: verify() returns a boolean",
+              "passed": true,
+              "evidence": "matched '\\\\bbool': **Depth: intro**  `verify()` returns a **boolean** \u2014 `true` or `false`.  It answers one question: did this message genuinely "
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present even on a two-line answer",
+              "passed": true,
+              "evidence": "` = fingerprints match, message is genuine. `false` = mismatch, reject it.  --- **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** Webhook, HMAC / message authentication code, Shared secret, Constant-time compa"
+            }
+          ],
+          "wall_s": 313.8
+        },
+        {
+          "id": "depth-intro",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.244245,
+          "duration_s": 163.7,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Glob",
+            "Read",
+            "Skill"
+          ],
+          "final": "---\n\n# Lesson: `src/webhook.php`\n\n**Project:** fixture-shop | **Depth:** intro (zero prior knowledge assumed)\n\n---\n\n## What this file is for\n\nImagine you run an online shop, and your shop uses a payment company (called a \"payment gateway\") to process credit cards. When a payment succeeds, fails, or is refunded, the payment company needs to tell your shop. It does this by sending an automated message over the internet directly to a web address your shop provides. That automatic message is called a **webhook** \u2014 \"hook\" because it hooks into your software and triggers action, \"web\" because it travels over the web.\n\n`src/webhook.php` is the code that receives one of those messages, checks that it really came from the payment gateway (not from an attacker), reads the data inside, and records it.\n\n---\n\n## The two files\n\nBefore the function even begins, line 3 of `webhook.php` pulls in a second file:\n\n```php\nrequire __DIR__ . '/verify.php';\n```\n\n`require` is PHP's way of saying \"load and run this other file right now, before anything else\". `__DIR__` means \"the folder this file lives in\". So this line makes the code in `src/verify.php` available \u2014 it contains one helper: the `verify` function, which we will meet shortly.\n\n---\n\n## The function signature\n\n```php\nfunction handle_webhook(string $rawBody, array $headers, string $secret): int\n```\n\nBreaking this apart:\n\n- `function handle_webhook` \u2014 declares a named recipe called `handle_webhook`.\n- The parentheses list the **parameters** \u2014 the ingredients the caller must supply:\n  - `string $rawBody` \u2014 the raw text of the message that arrived, exactly as the payment gateway sent it, before any processing.\n  - `array $headers` \u2014 a lookup table of metadata about the message (like the envelope around a letter). Headers carry information such as who sent the message and what type it is.\n  - `string $secret` \u2014 a shared password only your shop and the payment gateway know.\n- `: int` \u2014 the function promises to return a whole number. That number is an **HTTP status code** \u2014 a standardized number that tells the payment gateway whether everything went well or something failed: **200** = OK, **400** = bad request, **401** = unauthorized.\n\nThe comment at the top of the file tells us the payment gateway will **retry** any delivery that does not get a 200 back, which means the code must return 200 only when it is certain the message was valid and recorded.\n\n---\n\n## Step 1 \u2014 Check the signature (lines 11\u201314)\n\n```php\n$signature = $headers['X-Signature'] ?? '';\nif (!verify($rawBody, $signature, $secret)) {\n    return 401;\n}\n```\n\nThe payment gateway attaches a **digital signature** to every webhook it sends, inside a header called `X-Signature`. A digital signature is a fingerprint: computed from the message's contents using a secret key, it changes completely if either the message or the key changes. Because only the gateway and your shop know the secret, only they can produce a valid signature.\n\n`$headers['X-Signature'] ?? ''` means: look up `X-Signature` in the headers table; if it isn't there, use an empty string as a fallback.\n\n`verify(...)` (from `src/verify.php`, lines 12\u201315) recomputes the fingerprint of `$rawBody` using the shared `$secret`, then compares that against the signature the gateway sent. If they match, the message is genuine.\n\nThat comparison uses PHP's `hash_equals()` rather than the usual `==`. This is a security detail: `hash_equals` always takes the same amount of time regardless of how much the two strings differ, which prevents a **timing attack** \u2014 a class of attack where an attacker guesses secrets by measuring how long comparisons take.\n\nIf `verify` returns false, the function immediately returns `401` and stops. Nothing further happens.\n\n---\n\n## Step 2 \u2014 Parse the message body (lines 16\u201319)\n\n```php\n$event = json_decode($rawBody, true);\nif (!is_array($event) || !isset($event['id'])) {\n    return 400;\n}\n```\n\n**JSON** is a text format for structured data \u2014 like a very simplified spreadsheet written as plain text. Payment gateways almost universally send webhook payloads as JSON.\n\n`json_decode($rawBody, true)` converts the raw text into a PHP array (a lookup table of key-value pairs).\n\nThe `if` check then guards against two failures:\n1. The decoded result is not an array \u2014 the body wasn't valid JSON.\n2. The array does not contain a field called `id` \u2014 the message is missing data this code depends on.\n\nEither failure returns `400` and stops. This is called **input validation**: checking that the data you received is actually usable before you try to use it.\n\n---\n\n## Step 3 \u2014 Record the event (lines 21\u201322)\n\n```php\n$line = date('c') . ' ' . $event['id'] . \"\\n\";\nfile_put_contents(__DIR__ . '/../events.log', $line, FILE_APPEND | LOCK_EX);\n```\n\nThe code builds one line of text: a timestamp followed by the event's ID. `date('c')` produces the current date and time. The dot `.` in PHP joins strings together.\n\n`file_put_contents(...)` writes that line to `events.log`, one folder above `src/`. Two flags modify the write:\n- `FILE_APPEND` \u2014 add to the end of the file rather than overwriting it, so each event accumulates in order.\n- `LOCK_EX` \u2014 acquire an exclusive **file lock** before writing. If two webhook deliveries arrive simultaneously (possible \u2014 gateways sometimes retry), the lock ensures they take turns writing rather than corrupting each other's entries.\n\n---\n\n## Step 4 \u2014 Return success (line 24)\n\n```php\nreturn 200;\n```\n\nAll checks passed, the event is logged. The function returns 200, telling the payment gateway \"received, thank you.\" The gateway will not retry this delivery.\n\n---\n\n## The flow from start to finish\n\n```\nWebhook arrives\n       \u2502\n       \u25bc\nVerify signature\n \u251c\u2500 Invalid \u2500\u2500\u25ba return 401 (Unauthorized)\n \u2514\u2500 Valid\n       \u2502\n       \u25bc\nParse JSON body\n \u251c\u2500 Malformed or missing id \u2500\u2500\u25ba return 400 (Bad Request)\n \u2514\u2500 Well-formed\n       \u2502\n       \u25bc\nAppend event to events.log\n       \u2502\n       \u25bc\nreturn 200 (OK)\n```\n\n---\n\n## How the two files relate\n\n`verify.php` exists as a separate file because signature verification is a self-contained, reusable piece of logic. `webhook.php` is the coordinator \u2014 it orchestrates the sequence: authenticate, validate, act. Keeping authentication in its own function makes it easier to test in isolation and easier to swap if the signature algorithm ever changes.\n\nThe function returns an integer rather than printing a response or calling `exit()`. That is intentional: a test can call it and simply check the returned number without needing a real HTTP server running.\n\n---\n\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** webhook, HMAC signature / webhook signature verification, timing attack / constant-time comparison, HTTP status codes, JSON, input validation, file locking, gateway retry behavior",
+          "assertions": [
+            {
+              "type": "final_regex",
+              "desc": "intro depth stated",
+              "passed": true,
+              "evidence": "---  # Lesson: `src/webhook.php`  **Project:** fixture-shop | **Depth:** intro (zero prior knowledge assumed)  ---  ## What this file is for  Imagine you run "
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": "ply check the returned number without needing a real HTTP server running.  ---  **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** webhook, HMAC signature / webhook signature verification, timing attack / const"
+            }
+          ],
+          "wall_s": 523.2
+        },
+        {
+          "id": "post-save-lint",
+          "category": "vault-write correctness",
+          "skill": "alexandria-librarian",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.13371339999999998,
+          "duration_s": 66.1,
+          "tools": [
+            "Bash",
+            "Read",
+            "Skill",
+            "Write"
+          ],
+          "final": "Saved. Here's what was written:\n\n- **Note:** `fixture-shop/Sessions/2026-07-17 webhook-hmac-signature-verification.md`\n- **Glossary:** both concepts added as new entries (`HMAC Signature Verification`, `Constant-Time Comparison`)\n- **Index:** `fixture-shop/_index.md` updated\n- **Cross-project concepts:** none yet (neither concept appears in a second project)",
+          "assertions": [
+            {
+              "type": "vault_glob",
+              "desc": "session note written into Vault/fixture-shop/Sessions/",
+              "passed": true,
+              "evidence": "matches: ['fixture-shop\\\\Sessions\\\\2026-07-17 webhook-hmac-signature-verification.md']"
+            },
+            {
+              "type": "vault_glob",
+              "desc": "project glossary exists",
+              "passed": true,
+              "evidence": "matches: ['fixture-shop\\\\_glossary.md']"
+            },
+            {
+              "type": "vault_glob",
+              "desc": "project index exists",
+              "passed": true,
+              "evidence": "matches: ['fixture-shop\\\\_index.md']"
+            },
+            {
+              "type": "vault_lint_clean",
+              "desc": "vault_lint.py exits 0 on the vault after the save",
+              "passed": true,
+              "evidence": "exit 0 (clean)"
+            }
+          ],
+          "wall_s": 240.6
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "cases": [
+        {
+          "id": "fetch-restraint-walkthrough",
+          "category": "external-fetch restraint",
+          "skill": "alexandria-teach",
+          "error": null,
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.2001987,
+          "duration_s": 122.8,
+          "tools": [
+            "Agent",
+            "Bash",
+            "Read",
+            "Skill"
+          ],
+          "final": "---\n\n## Lesson: `src/verify.php` \u2014 Intro Depth\n\n### What problem does this code solve?\n\nWhen a payment gateway finishes doing something \u2014 like confirming a payment \u2014 it sends an automatic notification to your shop. That notification is called a **webhook**: a message the gateway \"hooks\" into your system without you asking for it.\n\nThe problem: anyone on the internet can send a request to that same URL. How does your shop know the message actually came from the gateway and not from an attacker trying to fake a \"payment confirmed\" event?\n\nThe answer is a **shared secret** \u2014 a long, random password that only your shop and the gateway know. The gateway uses this secret to produce a tamper-evident seal on every message it sends. Your shop checks the seal before trusting the message. `src/verify.php` performs that check.\n\n---\n\n### The seal: HMAC-SHA256\n\nThe seal the gateway produces is called an **HMAC** (Hash-based Message Authentication Code). To understand it, start with a **hash function**: a recipe that takes any piece of text and produces a fixed-length fingerprint. Change even one character of the input and the fingerprint changes completely. **SHA-256** is a specific, widely trusted hash recipe that produces a 64-character fingerprint.\n\nAn HMAC runs that recipe with the shared secret folded into the calculation. The result is a fingerprint only someone who knows the secret can reproduce. The gateway computes this fingerprint over the raw request body, then sends it in a header called `X-Signature`. Your shop recomputes it using the same body and secret \u2014 if they match, the message is genuine.\n\n---\n\n### Walking through the function\n\n```php\nfunction verify(string $payload, string $signature, string $secret): bool\n```\n\nThis declares a function named `verify`. A **function** is a named block of instructions you can call by name from elsewhere. It takes three inputs:\n\n- `$payload` \u2014 the raw text body of the webhook, exactly as it arrived.\n- `$signature` \u2014 the fingerprint the gateway sent in `X-Signature`.\n- `$secret` \u2014 your shop's privately stored shared secret.\n\nThe `: bool` means it returns a **boolean** \u2014 either `true` (genuine) or `false` (not genuine). That is its entire job.\n\n```php\n$expected = hash_hmac('sha256', $payload, $secret);\n```\n\nThis asks PHP to compute the HMAC fingerprint using SHA-256, the payload, and the secret. The result is stored as `$expected` \u2014 what your shop expects to see if the message is authentic.\n\n```php\nreturn hash_equals($expected, $signature);\n```\n\nThis compares `$expected` to the `$signature` that arrived. Match \u2192 `true`. No match \u2192 `false`. The reason it uses `hash_equals` instead of `===` is important.\n\n---\n\n### Why `hash_equals()` instead of `===`?\n\nThis guards against a **timing attack**.\n\nImagine guessing a PIN by watching how long it takes someone to say \"wrong.\" If they stop checking the moment they find the first wrong digit, a guess that's wrong only on the last digit takes slightly longer to reject than one wrong on the first digit. An attacker making thousands of guesses and measuring response times precisely can exploit that: fix each digit, time the rejections, and find the one that takes longest \u2014 that's the right digit. Repeat for each position.\n\nPHP's `===` works exactly like that \"stop at first mismatch\" checker \u2014 it walks character by character and returns `false` as soon as it finds a difference.\n\n`hash_equals()` always examines every character, no matter where the difference appears \u2014 same time whether strings match completely or differ immediately. An attacker measuring response times learns nothing. This is called **constant-time comparison**. Per the PHP documentation (not fetched this session), `hash_equals()` was added specifically for comparing cryptographic values.\n\n---\n\n### What the caller does with the result\n\nIf `verify` returns `true`, the caller can trust the webhook and act on it: mark an order paid, send a confirmation email, update inventory.\n\nIf `verify` returns `false`, the caller must reject the request immediately \u2014 no processing, and ideally log the failure. Accepting an unverified webhook could let an attacker fake payment confirmations for orders that were never paid.\n\n---\n\n**Files read:** [`src/verify.php`](src/verify.php) (commit `0731797`)\n**Sources fetched:** none\n\n---\n**Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts confirmed with you first).\n**Draft concepts this session:** webhook, HMAC, hash function, SHA-256, shared secret, timing attack, constant-time comparison",
+          "assertions": [
+            {
+              "type": "tools_absent",
+              "desc": "zero external fetches on a trivial walkthrough",
+              "passed": true,
+              "evidence": "none of ['WebFetch', 'WebSearch'] called"
+            },
+            {
+              "type": "final_not_regex",
+              "desc": "no external links included in the lesson",
+              "passed": true,
+              "evidence": "clean"
+            },
+            {
+              "type": "final_regex",
+              "desc": "depth stated in the lesson",
+              "passed": true,
+              "evidence": "---  ## Lesson: `src/verify.php` \u2014 Intro Depth  ### What problem does this code solve?  When a payment gateway finishes "
+            },
+            {
+              "type": "final_regex",
+              "desc": "save offer present",
+              "passed": true,
+              "evidence": "/verify.php`](src/verify.php) (commit `0731797`) **Sources fetched:** none  --- **Save this lesson?** Say \"save\" and alexandria-librarian will file it in your library (concepts conf"
+            },
+            {
+              "type": "final_regex",
+              "desc": "draft concept list present",
+              "passed": true,
+              "evidence": "ria-librarian will file it in your library (concepts confirmed with you first). **Draft concepts this session:** webhook, HMAC, hash function, SHA-256, shared secret, timing attack, constant-t"
+            }
+          ],
+          "wall_s": 129.3
+        },
+        {
+          "id": "no-guess-vendor-fact",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.039279999999999995,
+          "duration_s": 2.9,
+          "tools": [
+            "Skill"
+          ],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 137.2
+        },
+        {
+          "id": "no-guess-missing-file",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0.0390995,
+          "duration_s": 4.0,
+          "tools": [
+            "Skill"
+          ],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 138.3
+        },
+        {
+          "id": "depth-deep-dive",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 7.2
+        },
+        {
+          "id": "depth-intro",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.4,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 15.3
+        },
+        {
+          "id": "save-offer-minimal",
+          "category": "save-offer presence",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 1.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 12.7
+        },
+        {
+          "id": "post-save-lint",
+          "category": "vault-write correctness",
+          "skill": "alexandria-librarian",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.4,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 12.8
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "cases": [
+        {
+          "id": "no-guess-missing-file",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 6.0
+        },
+        {
+          "id": "no-guess-vendor-fact",
+          "category": "no-guessing bait",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 6.2
+        },
+        {
+          "id": "fetch-restraint-walkthrough",
+          "category": "external-fetch restraint",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.4,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 6.6
+        },
+        {
+          "id": "depth-intro",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.4,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 6.6
+        },
+        {
+          "id": "depth-deep-dive",
+          "category": "depth differentiation",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 7.5
+        },
+        {
+          "id": "save-offer-minimal",
+          "category": "save-offer presence",
+          "skill": "alexandria-teach",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.5,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 12.4
+        },
+        {
+          "id": "post-save-lint",
+          "category": "vault-write correctness",
+          "skill": "alexandria-librarian",
+          "error": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "model": "claude-sonnet-4-6",
+          "cost_usd": 0,
+          "duration_s": 0.3,
+          "tools": [],
+          "final": "You've hit your session limit \u00b7 resets 3:20pm (America/Chicago)",
+          "wall_s": 12.1
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "per_case": {
+      "no-guess-vendor-fact": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      },
+      "no-guess-missing-file": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      },
+      "fetch-restraint-walkthrough": {
+        "pass": 2,
+        "fail": 0,
+        "error": 1
+      },
+      "depth-deep-dive": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      },
+      "save-offer-minimal": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      },
+      "depth-intro": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      },
+      "post-save-lint": {
+        "pass": 1,
+        "fail": 0,
+        "error": 2
+      }
+    },
+    "flaky_cases": [],
+    "all_runs_green": false
+  }
+}
