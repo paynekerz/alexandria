@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>alexandria-teach — Skill Description Optimization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #faf9f5;
+            color: #141413;
+        }
+        h1 { font-family: 'Poppins', sans-serif; color: #141413; }
+        .explainer {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+            color: #b0aea5;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+        }
+        .summary p { margin: 5px 0; }
+        .best { color: #788c5d; font-weight: bold; }
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e8e6dc;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e8e6dc;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        th {
+            font-family: 'Poppins', sans-serif;
+            background: #141413;
+            color: #faf9f5;
+            font-weight: 500;
+        }
+        th.test-col {
+            background: #6a9bcc;
+        }
+        th.query-col { min-width: 200px; }
+        td.description {
+            font-family: monospace;
+            font-size: 11px;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+        td.result {
+            text-align: center;
+            font-size: 16px;
+            min-width: 40px;
+        }
+        td.test-result {
+            background: #f0f6fc;
+        }
+        .pass { color: #788c5d; }
+        .fail { color: #c44; }
+        .rate {
+            font-size: 9px;
+            color: #b0aea5;
+            display: block;
+        }
+        tr:hover { background: #faf9f5; }
+        .score {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .score-good { background: #eef2e8; color: #788c5d; }
+        .score-ok { background: #fef3c7; color: #d97706; }
+        .score-bad { background: #fceaea; color: #c44; }
+        .train-label { color: #b0aea5; font-size: 10px; }
+        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
+        .best-row { background: #f5f8f2; }
+        th.positive-col { border-bottom: 3px solid #788c5d; }
+        th.negative-col { border-bottom: 3px solid #c44; }
+        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
+        th.test-col.negative-col { border-bottom: 3px solid #c44; }
+        .legend { font-family: 'Poppins', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
+        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
+        .swatch-test { background: #6a9bcc; }
+        .swatch-train { background: #141413; }
+    </style>
+</head>
+<body>
+    <h1>alexandria-teach — Skill Description Optimization</h1>
+    <div class="explainer">
+        <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
+    </div>
+
+    <div class="summary">
+        <p><strong>Original:</strong> Explanation engine of the Alexandria learning suite. Use ONLY when the user explicitly invokes Alexandria by name or with /alexandria-teach to have code taught to them as a lesson (e.g. &quot;alexandria, teach me this file&quot;). Never use for ordinary coding, debugging, or code-review requests that don&#x27;t name Alexandria.</p>
+        <p class="best"><strong>Best:</strong> Explanation engine of the Alexandria learning suite. Use ONLY when the user explicitly invokes Alexandria by name or with /alexandria-teach to have code taught to them as a lesson (e.g. &quot;alexandria, teach me this file&quot;). Never use for ordinary coding, debugging, or code-review requests that don&#x27;t name Alexandria.</p>
+        <p><strong>Best Score:</strong> 20/20 (train)</p>
+        <p><strong>Iterations:</strong> 1 | <strong>Train:</strong> 20 | <strong>Test:</strong> 0</p>
+    </div>
+
+    <div class="legend">
+        <span style="font-weight:600">Query columns:</span>
+        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
+        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
+    </div>
+
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Iter</th>
+                <th>Train</th>
+                <th>Test</th>
+                <th class="query-col">Description</th>
+                <th class="positive-col">alexandria, teach me how the OrderRepository in app/code/Basys/IQProPayment/Model/OrderRepository.php works, intro level please</th>
+                <th class="positive-col">hey alexandria can you teach me what this webhook verification code in src/Webhooks/Verifier.php actually does? i&#x27;m new to hmac stuff</th>
+                <th class="positive-col">use /alexandria-teach on src/hooks/useCheckout.ts — i want the practitioner version this time</th>
+                <th class="positive-col">alexandria teach: the replication code in Source/Multiplayer/CharacterSync.cpp, deep-dive depth</th>
+                <th class="positive-col">I just inherited this Magento plugin from a contractor who left no docs. alexandria, walk me through etc/di.xml as a lesson — assume I know nothing about dependency injection</th>
+                <th class="positive-col">can alexandria explain the auth middleware to me like i&#x27;m brand new? file is packages/api/src/middleware/auth.guard.ts</th>
+                <th class="positive-col">ok time for another alexandria lesson. today: how does scripts/vault_lint.py decide a wiki-link is dead?</th>
+                <th class="positive-col">My boss wants me to understand the payment tokenization flow before the Friday demo. Alexandria, teach me src/tokenizer.js at intro depth</th>
+                <th class="positive-col">alexandria, i want a lesson on the recursion in utils/tree_flatten.py — and quiz me after</th>
+                <th class="positive-col">start an alexandria teaching session on how the GraphQL resolvers work in this repo, resolvers/order.resolver.ts specifically</th>
+                <th class="negative-col">fix the null pointer crash in src/checkout/session.php when the cart is empty</th>
+                <th class="negative-col">explain this file to me like I&#x27;m new to PHP — src/Gateway/Client.php</th>
+                <th class="negative-col">teach me how async/await works in javascript, quick examples are fine</th>
+                <th class="negative-col">can you walk me through what happens when a user checks out? just a quick explanation, nothing fancy</th>
+                <th class="negative-col">write docstrings for every function in scripts/vault.py</th>
+                <th class="negative-col">add a section to README.md describing what the alexandria-teach skill does</th>
+                <th class="negative-col">review my PR diff and tell me if the error handling in the webhook route is right</th>
+                <th class="negative-col">i don&#x27;t get why this regex in validate.ts keeps failing on unicode input, debug it for me</th>
+                <th class="negative-col">alexandria, file this lesson away in the vault please — concepts were HMAC verification and replay protection</th>
+                <th class="negative-col">create an onboarding doc for new engineers explaining our repo structure and conventions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="best-row">
+                <td>1</td>
+                <td><span class="score score-good">60/60</span></td>
+                <td><span class="score score-bad">0/0</span></td>
+                <td class="description">Explanation engine of the Alexandria learning suite. Use ONLY when the user explicitly invokes Alexandria by name or with /alexandria-teach to have code taught to them as a lesson (e.g. &quot;alexandria, teach me this file&quot;). Never use for ordinary coding, debugging, or code-review requests that don&#x27;t name Alexandria.</td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">3/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+</body>
+</html>

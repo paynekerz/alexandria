@@ -1,0 +1,448 @@
+﻿py : 
+At line:1 char:151
++ ... recall")) { py -m scripts.run_loop --eval-set "..\trigger\$skill.trig ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+============================================================
+Iteration 1/1
+Description: Memory layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria what it 
+has already taught them or whether a lesson is stale (e.g. "alexandria, have we covered this before?"). Never use for 
+general search, documentation lookup, or memory requests that don't name Alexandria.
+============================================================
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: alexandria, teach me 
+the drift detection algorithm at practi
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: summarize what this 
+conversation has covered so far
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: summarize what this 
+conversation has covered so far
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: find all TODO 
+comments older than six months in this repo
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: find all TODO 
+comments older than six months in this repo
+Warning: run errored (You've hit your session limit · resets 8:40pm (America/Chicago)) for query: find all TODO 
+comments older than six months in this repo
+Warning: all runs errored for query: find all TODO comments older than six months in this repo
+Train: 54/54 correct, precision=100% recall=100% accuracy=100% (342.5s)
+  [PASS] rate=3/3 expected=True: check my alexandria library — did I already learn about mage
+  [PASS] rate=3/3 expected=True: alexandria, have we covered webhook signature verification b
+  [PASS] rate=3/3 expected=True: alexandria recall: what did I learn about knockout.js bindin
+  [PASS] rate=3/3 expected=True: before you explain anything — alexandria, is my old lesson o
+  [PASS] rate=3/3 expected=True: ask alexandria if there's a stale lesson covering scripts/va
+  [PASS] rate=3/3 expected=True: alexandria, what lessons do I have saved for the ultra-coach
+  [PASS] rate=3/3 expected=True: use /alexandria-recall to see if 'authority' from my unreal 
+  [PASS] rate=3/3 expected=True: hey alexandria have i been taught anything about hmac before
+  [PASS] rate=3/3 expected=True: alexandria, check for drift on the sessions covering src/Gat
+  [PASS] rate=3/3 expected=True: alexandria — pull up whatever i've saved about graphql resol
+  [PASS] rate=0/3 expected=False: do you remember what we discussed yesterday about the api re
+  [PASS] rate=0/3 expected=False: have we covered error handling for the webhook route in any 
+  [PASS] rate=0/3 expected=False: search the codebase for where PaymentTokenizer gets instanti
+  [PASS] rate=0/3 expected=False: what did the last commit change in scripts/recall.py?
+  [PASS] rate=0/3 expected=False: grep my obsidian vault for notes about terraform state locki
+  [PASS] rate=0/3 expected=False: is the API documentation in docs/ still up to date with the 
+  [PASS] rate=0/3 expected=False: check git log to see when session.php last changed and who t
+  [PASS] rate=0/2 expected=False: alexandria, teach me the drift detection algorithm at practi
+  [PASS] rate=0/1 expected=False: summarize what this conversation has covered so far
+  [FAIL] rate=0/0 expected=False: find all TODO comments older than six months in this repo
+
+Max iterations reached (1).
+
+Exit reason: max_iterations (1)
+Best score: 19/20 (iteration 1)
+{
+  "exit_reason": "max_iterations (1)",
+  "original_description": "Memory layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria what it has already taught them or whether a lesson is stale (e.g. \"alexandria, have we covered this before?\"). Never use for general search, documentation lookup, or memory requests that don't name Alexandria.",
+  "best_description": "Memory layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria what it has already taught them or whether a lesson is stale (e.g. \"alexandria, have we covered this before?\"). Never use for general search, documentation lookup, or memory requests that don't name Alexandria.",
+  "best_score": "19/20",
+  "best_train_score": "19/20",
+  "best_test_score": null,
+  "final_description": "Memory layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria what it has already taught them or whether a lesson is stale (e.g. \"alexandria, have we covered this before?\"). Never use for general search, documentation lookup, or memory requests that don't name Alexandria.",
+  "iterations_run": 1,
+  "holdout": 0.0,
+  "train_size": 20,
+  "test_size": 0,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Memory layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria what it has already taught them or whether a lesson is stale (e.g. \"alexandria, have we covered this before?\"). Never use for general search, documentation lookup, or memory requests that don't name Alexandria.",
+      "train_passed": 19,
+      "train_failed": 1,
+      "train_total": 20,
+      "train_results": [
+        {
+          "query": "check my alexandria library \u2014 did I already learn about magento dependency injection?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, have we covered webhook signature verification before?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria recall: what did I learn about knockout.js bindings last month?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "before you explain anything \u2014 alexandria, is my old lesson on the tokenizer still accurate? i think the file changed",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "ask alexandria if there's a stale lesson covering scripts/vault.py",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, what lessons do I have saved for the ultra-coach project?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "use /alexandria-recall to see if 'authority' from my unreal project is in the concept index",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "hey alexandria have i been taught anything about hmac before? feel like we did this already",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, check for drift on the sessions covering src/Gateway/Client.php",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria \u2014 pull up whatever i've saved about graphql resolvers",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "do you remember what we discussed yesterday about the api refactor?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "have we covered error handling for the webhook route in any previous PR?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "search the codebase for where PaymentTokenizer gets instantiated",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "what did the last commit change in scripts/recall.py?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "grep my obsidian vault for notes about terraform state locking",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "is the API documentation in docs/ still up to date with the current endpoints?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "check git log to see when session.php last changed and who touched it",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, teach me the drift detection algorithm at practitioner depth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "errored_runs": 1,
+          "pass": true
+        },
+        {
+          "query": "summarize what this conversation has covered so far",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 1,
+          "errored_runs": 2,
+          "pass": true
+        },
+        {
+          "query": "find all TODO comments older than six months in this repo",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 0,
+          "errored_runs": 3,
+          "pass": false
+        }
+      ],
+      "test_passed": null,
+      "test_failed": null,
+      "test_total": null,
+      "test_results": null,
+      "passed": 19,
+      "failed": 1,
+      "total": 20,
+      "results": [
+
+        {
+          "query": "check my alexandria library \u2014 did I already learn about magento dependency injection?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+Report: ..\results\5.1-trigger\alexandria-recall-report.html
+Results saved to: ..\results\5.1-trigger\alexandria-recall\2026-07-16_183440
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, have we covered webhook signature verification before?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria recall: what did I learn about knockout.js bindings last month?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "before you explain anything \u2014 alexandria, is my old lesson on the tokenizer still accurate? i think the file changed",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "ask alexandria if there's a stale lesson covering scripts/vault.py",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, what lessons do I have saved for the ultra-coach project?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "use /alexandria-recall to see if 'authority' from my unreal project is in the concept index",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "hey alexandria have i been taught anything about hmac before? feel like we did this already",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, check for drift on the sessions covering src/Gateway/Client.php",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria \u2014 pull up whatever i've saved about graphql resolvers",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "do you remember what we discussed yesterday about the api refactor?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "have we covered error handling for the webhook route in any previous PR?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "search the codebase for where PaymentTokenizer gets instantiated",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "what did the last commit change in scripts/recall.py?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "grep my obsidian vault for notes about terraform state locking",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "is the API documentation in docs/ still up to date with the current endpoints?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "check git log to see when session.php last changed and who touched it",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, teach me the drift detection algorithm at practitioner depth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "errored_runs": 1,
+          "pass": true
+        },
+        {
+          "query": "summarize what this conversation has covered so far",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 1,
+          "errored_runs": 2,
+          "pass": true
+        },
+        {
+          "query": "find all TODO comments older than six months in this repo",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 0,
+          "errored_runs": 3,
+          "pass": false
+        }
+      ]
+    }
+  ]
+}

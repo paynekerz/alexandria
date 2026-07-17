@@ -1,0 +1,22 @@
+[
+  {"query": "alexandria, save this lesson", "should_trigger": true},
+  {"query": "yes — save that one to my alexandria library", "should_trigger": true},
+  {"query": "alexandria librarian: archive today's session on the payment gateway flow", "should_trigger": true},
+  {"query": "please have alexandria file this lesson — the concepts were HMAC verification and webhook replay protection", "should_trigger": true},
+  {"query": "alexandria save it, but add 'idempotency keys' to the concept list first", "should_trigger": true},
+  {"query": "ok that explanation was great. alexandria, archive it to the vault", "should_trigger": true},
+  {"query": "use /alexandria-librarian to save this session before I close the terminal", "should_trigger": true},
+  {"query": "alexandria, save this one under the ultra-coach project", "should_trigger": true},
+  {"query": "go ahead and save the lesson alexandria, skip the quiz", "should_trigger": true},
+  {"query": "alexandria: file that last explanation in my library and update the glossary", "should_trigger": true},
+  {"query": "save these api notes into docs/api-notes.md for me", "should_trigger": false},
+  {"query": "commit my changes with the message 'fix cart crash on empty checkout'", "should_trigger": false},
+  {"query": "add a note to my obsidian vault about today's standup decisions", "should_trigger": false},
+  {"query": "write up what we just discussed and put it in RESEARCH.md", "should_trigger": false},
+  {"query": "archive the old migration scripts into a legacy/ folder and update the imports", "should_trigger": false},
+  {"query": "can you update the changelog with the 4.3 drift detection entry", "should_trigger": false},
+  {"query": "export this conversation to a markdown file on my desktop so i can reference it later", "should_trigger": false},
+  {"query": "alexandria, teach me how session notes get linted — intro depth", "should_trigger": false},
+  {"query": "back up the vault folder to a zip before I refactor the schema", "should_trigger": false},
+  {"query": "create a glossary section in the team wiki for our payment processing terms", "should_trigger": false}
+]

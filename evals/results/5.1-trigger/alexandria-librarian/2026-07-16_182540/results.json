@@ -1,0 +1,393 @@
+{
+  "exit_reason": "all_passed (iteration 1)",
+  "original_description": "Persistence layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria to save, file, or archive a lesson (e.g. \"alexandria, save this lesson\" or accepting alexandria-teach's save offer). Never use for general note-taking or file-writing requests that don't name Alexandria.",
+  "best_description": "Persistence layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria to save, file, or archive a lesson (e.g. \"alexandria, save this lesson\" or accepting alexandria-teach's save offer). Never use for general note-taking or file-writing requests that don't name Alexandria.",
+  "best_score": "20/20",
+  "best_train_score": "20/20",
+  "best_test_score": null,
+  "final_description": "Persistence layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria to save, file, or archive a lesson (e.g. \"alexandria, save this lesson\" or accepting alexandria-teach's save offer). Never use for general note-taking or file-writing requests that don't name Alexandria.",
+  "iterations_run": 1,
+  "holdout": 0.0,
+  "train_size": 20,
+  "test_size": 0,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Persistence layer of the Alexandria learning suite. Use ONLY when the user explicitly asks Alexandria to save, file, or archive a lesson (e.g. \"alexandria, save this lesson\" or accepting alexandria-teach's save offer). Never use for general note-taking or file-writing requests that don't name Alexandria.",
+      "train_passed": 20,
+      "train_failed": 0,
+      "train_total": 20,
+      "train_results": [
+        {
+          "query": "alexandria, save this lesson",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "yes \u2014 save that one to my alexandria library",
+          "should_trigger": true,
+          "trigger_rate": 0.6666666666666666,
+          "triggers": 2,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria librarian: archive today's session on the payment gateway flow",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "please have alexandria file this lesson \u2014 the concepts were HMAC verification and webhook replay protection",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria save it, but add 'idempotency keys' to the concept list first",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "ok that explanation was great. alexandria, archive it to the vault",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "use /alexandria-librarian to save this session before I close the terminal",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, save this one under the ultra-coach project",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "go ahead and save the lesson alexandria, skip the quiz",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria: file that last explanation in my library and update the glossary",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "save these api notes into docs/api-notes.md for me",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "commit my changes with the message 'fix cart crash on empty checkout'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "add a note to my obsidian vault about today's standup decisions",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "write up what we just discussed and put it in RESEARCH.md",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "archive the old migration scripts into a legacy/ folder and update the imports",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "can you update the changelog with the 4.3 drift detection entry",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "export this conversation to a markdown file on my desktop so i can reference it later",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, teach me how session notes get linted \u2014 intro depth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "back up the vault folder to a zip before I refactor the schema",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "create a glossary section in the team wiki for our payment processing terms",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        }
+      ],
+      "test_passed": null,
+      "test_failed": null,
+      "test_total": null,
+      "test_results": null,
+      "passed": 20,
+      "failed": 0,
+      "total": 20,
+      "results": [
+        {
+          "query": "alexandria, save this lesson",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "yes \u2014 save that one to my alexandria library",
+          "should_trigger": true,
+          "trigger_rate": 0.6666666666666666,
+          "triggers": 2,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria librarian: archive today's session on the payment gateway flow",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "please have alexandria file this lesson \u2014 the concepts were HMAC verification and webhook replay protection",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria save it, but add 'idempotency keys' to the concept list first",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "ok that explanation was great. alexandria, archive it to the vault",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "use /alexandria-librarian to save this session before I close the terminal",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, save this one under the ultra-coach project",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "go ahead and save the lesson alexandria, skip the quiz",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria: file that last explanation in my library and update the glossary",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "save these api notes into docs/api-notes.md for me",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "commit my changes with the message 'fix cart crash on empty checkout'",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "add a note to my obsidian vault about today's standup decisions",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "write up what we just discussed and put it in RESEARCH.md",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "archive the old migration scripts into a legacy/ folder and update the imports",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "can you update the changelog with the 4.3 drift detection entry",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "export this conversation to a markdown file on my desktop so i can reference it later",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "alexandria, teach me how session notes get linted \u2014 intro depth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "back up the vault folder to a zip before I refactor the schema",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        },
+        {
+          "query": "create a glossary section in the team wiki for our payment processing terms",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "errored_runs": 0,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "note": "Addendum run. In the main batch, all 3 runs of this negative query errored on the plan's five-hour session limit (see errored_runs in results.json) and carried no signal. Rerun standalone via run_eval.py after the window reset, same model and settings.",
+  "skill_name": "alexandria-recall",
+  "results": [
+    {
+      "query": "find all TODO comments older than six months in this repo",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 3,
+      "errored_runs": 0,
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
+}

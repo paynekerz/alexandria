@@ -1,0 +1,22 @@
+[
+  {"query": "alexandria, teach me how the OrderRepository in app/code/Basys/IQProPayment/Model/OrderRepository.php works, intro level please", "should_trigger": true},
+  {"query": "use /alexandria-teach on src/hooks/useCheckout.ts — i want the practitioner version this time", "should_trigger": true},
+  {"query": "hey alexandria can you teach me what this webhook verification code in src/Webhooks/Verifier.php actually does? i'm new to hmac stuff", "should_trigger": true},
+  {"query": "I just inherited this Magento plugin from a contractor who left no docs. alexandria, walk me through etc/di.xml as a lesson — assume I know nothing about dependency injection", "should_trigger": true},
+  {"query": "alexandria teach: the replication code in Source/Multiplayer/CharacterSync.cpp, deep-dive depth", "should_trigger": true},
+  {"query": "can alexandria explain the auth middleware to me like i'm brand new? file is packages/api/src/middleware/auth.guard.ts", "should_trigger": true},
+  {"query": "ok time for another alexandria lesson. today: how does scripts/vault_lint.py decide a wiki-link is dead?", "should_trigger": true},
+  {"query": "My boss wants me to understand the payment tokenization flow before the Friday demo. Alexandria, teach me src/tokenizer.js at intro depth", "should_trigger": true},
+  {"query": "alexandria, i want a lesson on the recursion in utils/tree_flatten.py — and quiz me after", "should_trigger": true},
+  {"query": "start an alexandria teaching session on how the GraphQL resolvers work in this repo, resolvers/order.resolver.ts specifically", "should_trigger": true},
+  {"query": "fix the null pointer crash in src/checkout/session.php when the cart is empty", "should_trigger": false},
+  {"query": "explain this file to me like I'm new to PHP — src/Gateway/Client.php", "should_trigger": false},
+  {"query": "teach me how async/await works in javascript, quick examples are fine", "should_trigger": false},
+  {"query": "can you walk me through what happens when a user checks out? just a quick explanation, nothing fancy", "should_trigger": false},
+  {"query": "write docstrings for every function in scripts/vault.py", "should_trigger": false},
+  {"query": "add a section to README.md describing what the alexandria-teach skill does", "should_trigger": false},
+  {"query": "review my PR diff and tell me if the error handling in the webhook route is right", "should_trigger": false},
+  {"query": "i don't get why this regex in validate.ts keeps failing on unicode input, debug it for me", "should_trigger": false},
+  {"query": "create an onboarding doc for new engineers explaining our repo structure and conventions", "should_trigger": false},
+  {"query": "alexandria, file this lesson away in the vault please — concepts were HMAC verification and replay protection", "should_trigger": false}
+]
