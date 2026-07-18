@@ -91,3 +91,9 @@ These decisions were locked during planning. Don't relitigate them mid-build. Ch
 **Choice:** Skills trigger on explicit invocation only. Descriptions are deliberately written to avoid ambient triggering.
 
 **Rationale:** Alexandria's skills read vaults, fetch external sources, and write files -- none of which should happen because a description loosely pattern-matched an ordinary coding request. A user asking "fix this bug" must never get a surprise lesson or a surprise vault write. Explicit invocation keeps the suite predictable and is enforced by eval: the Phase 5 trigger evals test false-trigger rates, not just trigger rates.
+
+## 16. Plugin packaging: repo root as plugin root, skill names unchanged
+
+**Choice** (2026-07-18, for marketplace distribution): the repo root is the plugin root -- `.claude-plugin/plugin.json` sits at the top of this repository with `skills/`, `scripts/`, `agents/`, and `templates/` in place. Skill folder names stay `alexandria-teach`, `alexandria-librarian`, `alexandria-recall`, so plugin installs expose `/alexandria:alexandria-teach` while manual installs keep `/alexandria-teach`.
+
+**Rationale:** Restructuring into a `plugins/` subdirectory right after v1.0.0 would touch install docs, eval runner paths, and packaging scripts for a cosmetic win; the cost of the root layout is that the `evals/` tree (~6.5 MB) is copied into each user's plugin cache, which we accept. Renaming skill folders to get the cleaner `/alexandria:teach` would leak generic bare names (`/teach`, `/recall`) into manual installs -- directly against Decision 15 -- and would invalidate the Phase 5 eval strings the descriptions are pinned to. The stutter affects only the slash form on one install path; the documented natural-language invocation ("alexandria, teach me this file") triggers off descriptions and is identical everywhere. Full audit: `docs/MARKETPLACE-COMPLIANCE.md` (GAP-1, GAP-4).
