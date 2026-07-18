@@ -1,0 +1,363 @@
+{
+  "metadata": {
+    "task": "5.3-token-benchmark",
+    "started": "2026-07-17T18:37:24-05:00",
+    "repo_commit": "fde3f11",
+    "runs_per_type": 3,
+    "mode": "measure"
+  },
+  "results": [
+    {
+      "id": "simple-walkthrough",
+      "run": 2,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Agent",
+        "Bash",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 462,
+            "output": 17,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000547
+          },
+          "claude-sonnet-4-6": {
+            "input": 13,
+            "output": 4665,
+            "cacheRead": 113441,
+            "cacheCreation": 35581,
+            "costUSD": 0.23747505000000002
+          }
+        },
+        "totals": {
+          "input": 475,
+          "output": 4682,
+          "cacheRead": 113441,
+          "cacheCreation": 35581,
+          "costUSD": 0.23802205,
+          "total": 154179
+        },
+        "num_turns": 9,
+        "duration_s": 123.6
+      },
+      "wall_s": 130.7
+    },
+    {
+      "id": "simple-walkthrough",
+      "run": 1,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Agent",
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 462,
+            "output": 20,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000562
+          },
+          "claude-sonnet-4-6": {
+            "input": 16,
+            "output": 5177,
+            "cacheRead": 170354,
+            "cacheCreation": 36105,
+            "costUSD": 0.26420295
+          }
+        },
+        "totals": {
+          "input": 478,
+          "output": 5197,
+          "cacheRead": 170354,
+          "cacheCreation": 36105,
+          "costUSD": 0.26476495,
+          "total": 212134
+        },
+        "num_turns": 8,
+        "duration_s": 123.7
+      },
+      "wall_s": 131.2
+    },
+    {
+      "id": "simple-walkthrough",
+      "run": 3,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Agent",
+        "Bash",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 462,
+            "output": 17,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000547
+          },
+          "claude-sonnet-4-6": {
+            "input": 13,
+            "output": 5119,
+            "cacheRead": 128927,
+            "cacheCreation": 44592,
+            "costUSD": 0.2827221
+          }
+        },
+        "totals": {
+          "input": 475,
+          "output": 5136,
+          "cacheRead": 128927,
+          "cacheCreation": 44592,
+          "costUSD": 0.2832691,
+          "total": 179130
+        },
+        "num_turns": 7,
+        "duration_s": 126.9
+      },
+      "wall_s": 134.4
+    },
+    {
+      "id": "concept-heavy-sources",
+      "run": 2,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Bash",
+        "Read",
+        "Skill",
+        "ToolSearch",
+        "WebFetch"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 67936,
+            "output": 1739,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.076631
+          },
+          "claude-sonnet-4-6": {
+            "input": 245,
+            "output": 13927,
+            "cacheRead": 378352,
+            "cacheCreation": 25303,
+            "costUSD": 0.41803185
+          }
+        },
+        "totals": {
+          "input": 68181,
+          "output": 15666,
+          "cacheRead": 378352,
+          "cacheCreation": 25303,
+          "costUSD": 0.49466285,
+          "total": 487502
+        },
+        "num_turns": 20,
+        "duration_s": 294.7
+      },
+      "wall_s": 303.5
+    },
+    {
+      "id": "concept-heavy-sources",
+      "run": 1,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Agent",
+        "Bash",
+        "Glob",
+        "Read",
+        "Skill",
+        "WebFetch"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 28685,
+            "output": 835,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.03286
+          },
+          "claude-sonnet-4-6": {
+            "input": 19,
+            "output": 8963,
+            "cacheRead": 309278,
+            "cacheCreation": 36797,
+            "costUSD": 0.36527415
+          }
+        },
+        "totals": {
+          "input": 28704,
+          "output": 9798,
+          "cacheRead": 309278,
+          "cacheCreation": 36797,
+          "costUSD": 0.39813415,
+          "total": 384577
+        },
+        "num_turns": 15,
+        "duration_s": 193.4
+      },
+      "wall_s": 501.8
+    },
+    {
+      "id": "concept-heavy-sources",
+      "run": 3,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Agent",
+        "Bash",
+        "Read",
+        "Skill",
+        "WebFetch"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 23497,
+            "output": 1186,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.029427000000000002
+          },
+          "claude-sonnet-4-6": {
+            "input": 14,
+            "output": 9641,
+            "cacheRead": 203984,
+            "cacheCreation": 28742,
+            "costUSD": 0.31363470000000004
+          }
+        },
+        "totals": {
+          "input": 23511,
+          "output": 10827,
+          "cacheRead": 203984,
+          "cacheCreation": 28742,
+          "costUSD": 0.3430617,
+          "total": 267064
+        },
+        "num_turns": 12,
+        "duration_s": 209.4
+      },
+      "wall_s": 514.4
+    },
+    {
+      "id": "recall-assisted",
+      "run": 2,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "AskUserQuestion",
+        "Bash",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 456,
+            "output": 16,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000536
+          },
+          "claude-sonnet-4-6": {
+            "input": 10,
+            "output": 2041,
+            "cacheRead": 151529,
+            "cacheCreation": 14840,
+            "costUSD": 0.1317537
+          }
+        },
+        "totals": {
+          "input": 466,
+          "output": 2057,
+          "cacheRead": 151529,
+          "cacheCreation": 14840,
+          "costUSD": 0.1322897,
+          "total": 168892
+        },
+        "num_turns": 8,
+        "duration_s": 65.3
+      },
+      "wall_s": 87.0
+    },
+    {
+      "id": "recall-assisted",
+      "run": 1,
+      "error": "You've hit your session limit \u00b7 resets 8:40pm (America/Chicago)",
+      "model": "claude-sonnet-4-6",
+      "tools": [],
+      "wall_s": 289.6
+    },
+    {
+      "id": "recall-assisted",
+      "run": 3,
+      "error": "You've hit your session limit \u00b7 resets 8:40pm (America/Chicago)",
+      "model": "claude-sonnet-4-6",
+      "tools": [],
+      "wall_s": 75.6
+    }
+  ],
+  "aggregate": {
+    "simple-walkthrough": {
+      "desc": "one-file walkthrough, no external sources",
+      "valid_runs": 3,
+      "total_tokens_mean": 181814,
+      "total_tokens_min": 154179,
+      "total_tokens_max": 212134,
+      "output_tokens_mean": 5005,
+      "cost_usd_mean": 0.262
+    },
+    "concept-heavy-sources": {
+      "desc": "concept-heavy lesson with Tier 1 source retrieval",
+      "valid_runs": 3,
+      "total_tokens_mean": 379714,
+      "total_tokens_min": 267064,
+      "total_tokens_max": 487502,
+      "output_tokens_mean": 12097,
+      "cost_usd_mean": 0.412
+    },
+    "recall-assisted": {
+      "desc": "topic already in the library; recall links, teach covers the delta",
+      "valid_runs": 1,
+      "total_tokens_mean": 168892,
+      "total_tokens_min": 168892,
+      "total_tokens_max": 168892,
+      "output_tokens_mean": 2057,
+      "cost_usd_mean": 0.1323
+    }
+  }
+}

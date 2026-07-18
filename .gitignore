@@ -21,3 +21,13 @@ desktop.ini
 # Local scratch
 *.local.md
 .claude/settings.local.json
+
+# Personal voice guide for the 6.3 stop-slop pass — never commit
+STYLE.md
+CLAUDE.md
+PROMPTS.md
+ROADMAP.md
+
+# Release artifacts (attached to GitHub releases, not committed)
+dist/
+RELEASE-NOTES-*.md

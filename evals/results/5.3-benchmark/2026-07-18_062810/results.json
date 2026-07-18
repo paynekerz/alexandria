@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "task": "5.3-token-benchmark",
+    "started": "2026-07-18T06:28:10-05:00",
+    "repo_commit": "fde3f11",
+    "runs_per_type": 2,
+    "mode": "measure"
+  },
+  "results": [
+    {
+      "id": "recall-assisted",
+      "run": 2,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "Bash",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 456,
+            "output": 16,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000536
+          },
+          "claude-sonnet-4-6": {
+            "input": 9,
+            "output": 1606,
+            "cacheRead": 122008,
+            "cacheCreation": 14066,
+            "costUSD": 0.11346689999999998
+          }
+        },
+        "totals": {
+          "input": 465,
+          "output": 1622,
+          "cacheRead": 122008,
+          "cacheCreation": 14066,
+          "costUSD": 0.11400289999999998,
+          "total": 138161
+        },
+        "num_turns": 7,
+        "duration_s": 56.0
+      },
+      "wall_s": 62.7
+    },
+    {
+      "id": "recall-assisted",
+      "run": 1,
+      "error": null,
+      "model": "claude-sonnet-4-6",
+      "tools": [
+        "AskUserQuestion",
+        "Bash",
+        "Read",
+        "Skill"
+      ],
+      "representative": true,
+      "representative_detail": "ok",
+      "usage": {
+        "perModel": {
+          "claude-haiku-4-5-20251001": {
+            "input": 456,
+            "output": 16,
+            "cacheRead": 0,
+            "cacheCreation": 0,
+            "costUSD": 0.000536
+          },
+          "claude-sonnet-4-6": {
+            "input": 10,
+            "output": 2140,
+            "cacheRead": 151371,
+            "cacheCreation": 14815,
+            "costUSD": 0.13309755
+          }
+        },
+        "totals": {
+          "input": 466,
+          "output": 2156,
+          "cacheRead": 151371,
+          "cacheCreation": 14815,
+          "costUSD": 0.13363355000000002,
+          "total": 168808
+        },
+        "num_turns": 8,
+        "duration_s": 73.6
+      },
+      "wall_s": 80.6
+    }
+  ],
+  "aggregate": {
+    "recall-assisted": {
+      "desc": "topic already in the library; recall links, teach covers the delta",
+      "valid_runs": 2,
+      "total_tokens_mean": 153484,
+      "total_tokens_min": 138161,
+      "total_tokens_max": 168808,
+      "output_tokens_mean": 1889,
+      "cost_usd_mean": 0.1238
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  // Config for markdownlint-cli2 (local runs and the CI action).
+  // Rule settings live in .markdownlint.jsonc; this file only scopes what gets linted.
+  "config": {
+    "extends": "./.markdownlint.jsonc"
+  },
+  // Vendored upstream skill-creator tooling -- not our prose, not held to our lint rules.
+  "ignores": [
+    "evals/tooling/**",
+    "node_modules/**"
+  ]
+}
