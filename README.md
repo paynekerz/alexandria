@@ -23,6 +23,19 @@ They only run when you name Alexandria or use the slash command (`/alexandria-te
 
 ## Install
 
+### Option A -- as a plugin (recommended)
+
+Inside Claude Code:
+
+```shell
+/plugin marketplace add paynekerz/alexandria
+/plugin install alexandria@alexandria
+```
+
+That's the whole install. Skills arrive namespaced (`/alexandria:alexandria-teach`), though you'll normally just talk to them by name ("alexandria, teach me this file"). Once the suite is listed in Anthropic's community marketplace you can install from there instead: `/plugin marketplace add anthropics/claude-plugins-community`, then `/plugin install alexandria@claude-community`.
+
+### Option B -- manual copy
+
 Alexandria installs as three skill folders plus a shared `scripts/`, `agents/`, and `templates/` folder that must sit beside them under your `.claude` directory. The skills locate the scripts relative to their own path, so the layout matters.
 
 1. Clone the repo:
@@ -56,7 +69,7 @@ You don't run a setup command. The first time you invoke any Alexandria skill, i
 3. **Default lesson depth** -- `intro` assumes no prior knowledge and is the default. You can override depth per session, so this is only what you get when you don't ask.
 4. **Quiz on or off** -- an optional 2-3 question comprehension check at the end of each lesson. Off by default; you can say "quiz me" in any session regardless.
 
-Setup then writes `~/.alexandria/config.json`, scaffolds the empty vault (a `Welcome.md`, a `_Concepts/` folder, and vault metadata), installs the teacher subagent, and continues with whatever you originally asked. The second invocation skips all of this.
+Setup then writes `~/.alexandria/config.json`, scaffolds the empty vault (a `Welcome.md`, a `_Concepts/` folder, and vault metadata), pins the teacher subagent if you chose a specific model, and continues with whatever you originally asked. The second invocation skips all of this.
 
 **Note:** the vault opens directly in Obsidian -- File > Open folder as vault > pick your vault path.
 
@@ -77,9 +90,9 @@ A narrated day of real use is in [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
 Plainly: **a Claude Code skill cannot switch the model your session runs on.** Any skill that claims otherwise is overstating what skills can do.
 
-What Alexandria does instead: the heavy explanation work is delegated to a subagent (`alexandria-teacher`), and subagents are the one mechanism Claude Code provides for pinning a model. Setup writes your chosen model into that subagent's config, so lessons genuinely run on the model you picked -- even if your session is running something else. The conversational parts (scoping your question, the save offer) still run on your session's model, and there Alexandria can only *recommend* you run `/model`.
+What Alexandria does instead: the heavy explanation work is delegated to a subagent (`alexandria-teacher`), and subagents are the one mechanism Claude Code provides for pinning a model. The bundled agent inherits your session's model; if you choose a specific model at setup, a pinned copy is written to `~/.claude/agents/alexandria-teacher.md` (user-scope agents override the bundled one), so lessons genuinely run on the model you picked -- even if your session is running something else. The conversational parts (scoping your question, the save offer) still run on your session's model, and there Alexandria can only *recommend* you run `/model`.
 
-Full explanation: [docs/MODEL-SELECTION.md](docs/MODEL-SELECTION.md). To change your choice later, edit `preferredModel` in `~/.alexandria/config.json` **and** the `model:` line in `~/.claude/agents/alexandria-teacher.md` (keep them in sync -- see Troubleshooting).
+Full explanation: [docs/MODEL-SELECTION.md](docs/MODEL-SELECTION.md). To change your choice later, re-run `setup.py --force` with the new model (see Troubleshooting).
 
 ## The vault
 
@@ -94,11 +107,27 @@ The full v1 schema -- layout, naming rules, frontmatter fields, glossary and ind
 | Skill says config is invalid and names a field | `~/.alexandria/config.json` was hand-edited into a bad state. Fix the named field, or re-run setup: `python ~/.claude/scripts/setup.py --force ...` (it will tell you the flags it needs). |
 | "vault schemaVersion mismatch" and the skill refuses to write | Your vault was created by a different Alexandria version. Don't edit `meta.json` by hand; run `python ~/.claude/scripts/migrate.py` and follow its instructions. |
 | Retrieval fails naming a broken note | A session note has invalid frontmatter (usually from hand-editing). Run `python ~/.claude/scripts/vault_lint.py` to see every problem, and `--repair` to regenerate the derived files. Lint never touches your lesson prose. |
-| Teacher subagent not found | `~/.claude/agents/alexandria-teacher.md` is missing. Re-run step 3 of Install, then invoke any skill -- setup re-installs it. |
-| Changed `preferredModel` but lessons still use the old model | Known limitation: re-running setup can't re-fill the installed subagent's model line. Edit the `model:` line in `~/.claude/agents/alexandria-teacher.md` directly so it matches your config. |
+| Teacher subagent not found | Plugin install: run `/plugin` and check `alexandria` is enabled, then `/reload-plugins`. Manual install: `~/.claude/agents/alexandria-teacher.md` is missing -- re-run step 3 of Install. |
+| Changed `preferredModel` but lessons still use the old model | Re-run setup with the new choice: `python <path>/scripts/setup.py --force --model <choice> --vault-path <your vault>`. It re-pins (or un-pins, for `inherit`) `~/.claude/agents/alexandria-teacher.md` and updates the config together. |
 | A teach response is missing the save-offer footer | Rare known issue (tracked). The save still works -- just say "alexandria, save this lesson". |
 | `python` not found | Install Python 3.9+ and make sure it's on PATH as `python` (on macOS you may need `alias python=python3` or adjust the commands). |
 | Skills don't appear after install | Restart Claude Code; skills are discovered at startup. Then check the Success condition under Install. |
+
+## What Alexandria reads, writes, and fetches
+
+Stated plainly so you can decide whether to trust it:
+
+**Writes.** Exactly three locations, nothing else:
+
+- **Your vault** (the path you chose at setup; default `~/Desktop/Alexandria`). Every write goes through `scripts/vault.py`, which validates the target and refuses any path outside the vault root -- this is unit-tested, not a convention. Nothing is ever saved without you saying "save", and you confirm the concept list first.
+- **`~/.alexandria/config.json`** -- your setup answers. Written once at first run, again only on `setup.py --force`.
+- **`~/.claude/agents/alexandria-teacher.md`** -- only if you choose a specific teaching model at setup (the pinned subagent copy; see "Choosing a model"). Choosing `inherit` writes nothing here.
+
+**Reads.** The code you ask to be taught, your vault, and your project's git state (`git log`, `rev-parse`) for drift stamps. Recall reads only the current project's vault folder unless you explicitly ask for cross-project material.
+
+**Fetches.** External sources are conditional: only when a concept genuinely benefits, from a tiered allowlist first (MIT OCW, official docs, etc.), and every link is fetched to verify it's alive before it enters a note. A plain code walkthrough fetches nothing. There is no telemetry, no analytics, and no network traffic besides those source fetches.
+
+**Runs.** Python 3.9+ standard library only -- no pip installs, no third-party packages, no hooks, no MCP servers.
 
 ## Project documents
 

@@ -1,0 +1,16 @@
+{
+  "name": "alexandria",
+  "owner": {
+    "name": "Payne Kerz",
+    "email": "paynekerz@gmail.com"
+  },
+  "description": "Alexandria -- learn your own codebase, keep the lessons in an Obsidian library.",
+  "plugins": [
+    {
+      "name": "alexandria",
+      "source": "./",
+      "description": "Teaches you your own codebase like a patient instructor, then archives every lesson into a personal Obsidian library -- glossaries, concept indexes, drift detection. Invoke-only.",
+      "category": "learning"
+    }
+  ]
+}

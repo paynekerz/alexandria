@@ -15,11 +15,11 @@ So Alexandria splits the work:
 - Your main session (any model) handles the conversation: figuring out what you asked, checking your library, offering the save.
 - The heavy explanation work goes to the **`alexandria-teacher` subagent**, whose config file contains `model: <your choice>`.
 
-During setup, `scripts/setup.py` takes the template at `agents/alexandria-teacher.md`, replaces its model placeholder with the model you chose, and installs it to `~/.claude/agents/`. From then on, every lesson's explanation runs on your chosen model, regardless of what model your session happens to be using.
+The agent ships at `agents/alexandria-teacher.md` **without** a `model:` line, so out of the box it inherits your session's model and works with zero writes into `~/.claude/`. When you pick a specific model at setup, `scripts/setup.py` writes a copy with a pinned `model:` line to `~/.claude/agents/alexandria-teacher.md`. User-scope agents take precedence over same-named plugin agents, so the pinned copy is what runs. From then on, every lesson's explanation runs on your chosen model, regardless of what model your session happens to be using.
 
-If you chose `inherit` at setup, the model line is omitted entirely and the teacher runs on whatever your session runs on.
+If you chose `inherit` at setup, no pinned copy is written (and any stale pin from an earlier choice is stripped); the teacher runs on whatever your session runs on.
 
-To change your choice later: edit `preferredModel` in `~/.alexandria/config.json` and the `model:` line in `~/.claude/agents/alexandria-teacher.md`, keeping them in sync. (Re-running `setup.py --force` re-fills the model line only when the installed agent file still contains the template placeholder; after first install, editing the `model:` line directly is the reliable path.)
+To change your choice later, re-run setup: `python <path>/scripts/setup.py --force --model <choice> ...` (it re-pins or un-pins the agent and keeps `~/.alexandria/config.json` in sync). Editing the `model:` line in `~/.claude/agents/alexandria-teacher.md` by hand works too -- just keep `preferredModel` in the config matched to it.
 
 ## Outside the subagent: recommendation only
 

@@ -7,6 +7,7 @@ Every item must pass before a release is tagged.
 - [ ] **Unit tests green.** From the repo root: `python -m pytest scripts/tests/ -q` (or `python -m unittest discover scripts/tests`). All 71 tests pass.
 - [ ] **Markdown lint green.** The `markdown-lint` CI workflow passes on the release commit.
 - [ ] **No untracked local-only files in the tag.** `git ls-files | grep -E "STYLE|PROMPTS|ROADMAP|CLAUDE"` returns nothing; `git log --all -- STYLE.md` is empty.
+- [ ] **Plugin validation green.** From the repo root: `claude plugin validate .` exits 0 (checks `plugin.json`, `marketplace.json`, and skill/agent frontmatter -- the marketplace review pipeline runs the same check).
 - [ ] **Trigger-eval extrapolation still valid.** Every SKILL.md frontmatter `description` is byte-identical to the `original_description` in that skill's newest `evals/results/5.1-trigger/<skill>/*/results.json`, and the eval sets and invocation-visible names are unchanged (Decision 16). If anything differs, the 7.2 extrapolation (`evals/results/7.2-description/SUMMARY.md`) no longer holds -- re-run the description optimization loop (or at minimum the section 4 baseline eval) before tagging.
 
 ## 2. Token budget gate
@@ -44,7 +45,7 @@ Do this on a machine (or fresh user account / container) that has never had Alex
 - [ ] Follow the README's Install section only: skill folders into `~/.claude/skills/`, `scripts/`, `agents/`, `templates/` into `~/.claude/`.
 - [ ] README Success condition holds: three `alexandria-*` folders under `~/.claude/skills/`, `~/.claude/scripts/config.py` exists.
 - [ ] `python ~/.claude/scripts/config.py` exits `1` with the "run the first-run setup" message (no config yet -- expected).
-- [ ] In a real project, invoke `alexandria-teach`; the first-run interview runs once, `~/.alexandria/config.json` is written, the vault is scaffolded, the teacher agent lands in `~/.claude/agents/alexandria-teacher.md` with the chosen model, and the originally requested lesson happens in the same turn.
+- [ ] In a real project, invoke `alexandria-teach`; the first-run interview runs once, `~/.alexandria/config.json` is written, the vault is scaffolded, and the originally requested lesson happens in the same turn. If a specific model was chosen, the pinned teacher agent lands in `~/.claude/agents/alexandria-teacher.md`; if `inherit` was chosen, no agent write happens and the bundled/copied inherit agent is used.
 - [ ] Complete one full loop per the README: teach -> save -> recall surfaces the saved lesson -> `python ~/.claude/scripts/vault_lint.py` reports `clean: 0 findings`.
 - [ ] Second invocation of any skill skips the interview.
 
@@ -64,6 +65,7 @@ Do this on a machine (or fresh user account / container) that has never had Alex
 ## 5. Publish
 
 - [ ] CHANGELOG has a dated entry for the version; known issues listed honestly.
+- [ ] **Single version source.** `.claude-plugin/plugin.json` `version` is bumped to this release and matches the CHANGELOG entry and the tag. Never set `version` in a `marketplace.json` plugin entry -- `plugin.json` silently wins and a stale manifest would mask it. Marketplace users only receive updates when this field changes.
 - [ ] Tag `v<version>` on the release commit; push the tag.
 - [ ] GitHub release created with the release notes and all four zips attached.
 - [ ] README install instructions point at the release URL and work as written (spot-check the clone/download path in the notes).

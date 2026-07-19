@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Plugin packaging for the Claude Code marketplace: `.claude-plugin/plugin.json` manifest and `.claude-plugin/marketplace.json` catalog, so `/plugin marketplace add paynekerz/alexandria` installs the suite directly; README gained a plugin-install section. `claude plugin validate` passes in both marketplace and plugin-directory modes.
+- Marketplace compliance audit (`docs/MARKETPLACE-COMPLIANCE.md`) built from the official submission docs, with tracked gaps.
+- README section "What Alexandria reads, writes, and fetches" -- a plain-language disclosure of every write location, read scope, and network fetch.
+- Release-checklist gates: `claude plugin validate`, single-version-source rule, and a trigger-eval drift check that voids the 7.2 extrapolation if descriptions ever change.
+
+### Changed
+
+- The bundled `agents/alexandria-teacher.md` now ships without a `model:` line (inherits the session model), so a plugin install works with zero writes into `~/.claude/`. Choosing a specific model at setup writes a model-pinned user-scope copy to `~/.claude/agents/alexandria-teacher.md`, which overrides the bundled agent; choosing `inherit` strips any stale pin.
+
+### Fixed
+
+- `setup.py --force` now re-pins or un-pins the teacher agent's model reliably (1.0.0 known issue: it could not re-fill the model line once the placeholder was consumed).
+
 ## [1.0.0] - 2026-07-18
 
 First release. Three Claude Code skills that teach you your own codebase and archive every lesson into a dedicated Obsidian vault.

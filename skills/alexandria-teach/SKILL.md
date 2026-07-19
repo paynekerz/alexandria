@@ -64,7 +64,7 @@ In the lesson, an already-taught concept gets a wiki-link on first mention -- `[
 
 ## Step 3 -- Delegate the explanation
 
-Invoke the `alexandria-teacher` subagent (installed at `~/.claude/agents/alexandria-teacher.md`, model-pinned from config -- see `docs/MODEL-SELECTION.md`) with:
+Invoke the `alexandria-teacher` subagent (bundled with the plugin, or at `~/.claude/agents/alexandria-teacher.md` for manual installs; a model-pinned user-scope copy exists when config names a model -- see `docs/MODEL-SELECTION.md`) with:
 
 - the target files/symbols,
 - the depth and the path to [references/depth.md](references/depth.md),

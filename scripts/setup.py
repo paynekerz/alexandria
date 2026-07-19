@@ -10,6 +10,7 @@ import argparse
 import datetime
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -34,17 +35,34 @@ def agents_dir():
 
 
 def generate_teacher_agent(model):
-    """Fill agents/alexandria-teacher.md's model placeholder and install it.
+    """Install a model-pinned user-scope override of the bundled teacher agent.
 
-    'inherit' means: omit the model line entirely so the subagent runs on
-    whatever model the session runs on (see docs/MODEL-SELECTION.md).
+    The bundled agents/alexandria-teacher.md ships without a model line
+    (inherit). Pinning works by writing a copy with a `model:` line inserted
+    to ~/.claude/agents/, where user-scope agents override plugin agents
+    (see docs/MODEL-SELECTION.md).
+
+    'inherit' means: no pin should remain. The stale pin is stripped in
+    place rather than the file deleted -- in the merged manual layout the
+    target is the only copy of the agent. Returns the pinned path, or None
+    when the bundled/inherit agent is what runs.
     """
-    template = (REPO_ROOT / "agents" / "alexandria-teacher.md").read_text(encoding="utf-8")
-    if model == "inherit":
-        filled = template.replace("model: {{ALEXANDRIA_MODEL}}\n", "")
-    else:
-        filled = template.replace("{{ALEXANDRIA_MODEL}}", model)
     target = agents_dir() / "alexandria-teacher.md"
+    if model == "inherit":
+        if target.is_file():
+            text = target.read_text(encoding="utf-8")
+            stripped = re.sub(r"(?m)^model: .*\n", "", text, count=1)
+            if stripped != text:
+                target.write_text(stripped, encoding="utf-8")
+        return None
+    source = (REPO_ROOT / "agents" / "alexandria-teacher.md").read_text(encoding="utf-8")
+    # In the merged manual layout the source may BE a previously pinned
+    # override (source path == target path); drop any existing model line
+    # so repeated --force runs re-pin instead of stacking duplicate keys.
+    source = re.sub(r"(?m)^model: .*\n", "", source, count=1)
+    filled = source.replace("\ntools: ", f"\nmodel: {model}\ntools: ", 1)
+    if f"model: {model}\n" not in filled:
+        raise RuntimeError("agents/alexandria-teacher.md: could not find the frontmatter anchor to pin the model")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(filled, encoding="utf-8")
     return target
@@ -133,7 +151,10 @@ def main():
 
     print(f"Config written: {cfg_file}")
     print(f"Vault root:     {vault_root}")
-    print(f"Teacher agent:  {agent_file} (model: {args.model.strip()})")
+    if agent_file is None:
+        print("Teacher agent:  bundled (model: inherit; no user-scope override installed)")
+    else:
+        print(f"Teacher agent:  {agent_file} (model: {args.model.strip()})")
     for c in created:
         print(f"  created {c.relative_to(vault_root) if c != vault_root else '.'}")
     if not created:

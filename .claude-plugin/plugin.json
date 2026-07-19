@@ -1,0 +1,20 @@
+{
+  "name": "alexandria",
+  "description": "Teaches you your own codebase like a patient instructor, then archives every lesson into a personal Obsidian library -- per-project glossaries, cross-project concept indexes, and drift detection that flags stale explanations. Invoke-only: it never triggers on ordinary coding requests.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Payne Kerz (ArcLayer LLC)",
+    "email": "paynekerz@gmail.com"
+  },
+  "homepage": "https://github.com/paynekerz/alexandria",
+  "repository": "https://github.com/paynekerz/alexandria",
+  "license": "MIT",
+  "keywords": [
+    "learning",
+    "teaching",
+    "codebase-onboarding",
+    "obsidian",
+    "knowledge-base",
+    "documentation"
+  ]
+}
