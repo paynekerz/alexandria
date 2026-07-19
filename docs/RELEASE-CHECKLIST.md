@@ -7,6 +7,7 @@ Every item must pass before a release is tagged.
 - [ ] **Unit tests green.** From the repo root: `python -m pytest scripts/tests/ -q` (or `python -m unittest discover scripts/tests`). All 71 tests pass.
 - [ ] **Markdown lint green.** The `markdown-lint` CI workflow passes on the release commit.
 - [ ] **No untracked local-only files in the tag.** `git ls-files | grep -E "STYLE|PROMPTS|ROADMAP|CLAUDE"` returns nothing; `git log --all -- STYLE.md` is empty.
+- [ ] **Trigger-eval extrapolation still valid.** Every SKILL.md frontmatter `description` is byte-identical to the `original_description` in that skill's newest `evals/results/5.1-trigger/<skill>/*/results.json`, and the eval sets and invocation-visible names are unchanged (Decision 16). If anything differs, the 7.2 extrapolation (`evals/results/7.2-description/SUMMARY.md`) no longer holds -- re-run the description optimization loop (or at minimum the section 4 baseline eval) before tagging.
 
 ## 2. Token budget gate
 
